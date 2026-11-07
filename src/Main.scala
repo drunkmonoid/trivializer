@@ -528,6 +528,21 @@ package trivializer
           && Enumeration.joinWord(1, prefix) == word
           && split.isBijective(Sequence.words(alphabet, k), product)
       }
+    ),
+    check(
+      "graph", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val edges = FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)
+        val path = Graph.tryOf(stored, edges)
+        val tooBig = Graph.tryOf(stored, FiniteSet.singleton(stored))
+        val outside = Graph.tryOf(stored, FiniteSet.singleton(FiniteSet.empty[Int].insert(0).insert(3)))
+        path.isDefined
+          && path.get.vertices.equal(stored)
+          && path.get.edges.equal(edges)
+          && tooBig.isEmpty
+          && outside.isEmpty
+      }
     )
   )
 
