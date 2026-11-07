@@ -178,6 +178,18 @@ package trivializer
           && bag.support.toList == List(1, 2)
           && bag.support.cardinality == 2
       }
+    ),
+    check(
+      "witness", {
+        val chosen = FiniteSet.empty[Int].insert(0).insert(1)
+        Subset.tryWitness(stored, chosen) match
+          case Some(witness) =>
+            witness.chosen.toList == List(0, 1)
+              && witness.ambient.equal(stored)
+              && Subset.tryWitness(stored, FiniteSet.singleton(3)).isEmpty
+              && Subset.tryWitness(stored, FiniteSet.empty[Int]).isDefined
+          case None => false
+      }
     )
   )
 
