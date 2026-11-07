@@ -387,6 +387,16 @@ package trivializer
           && Enumeration.count(perms) == perms.toList.length
           && Enumeration.count(perms) == perms.cardinality
       }
+    ),
+    check(
+      "subsets-and-words", {
+        val bits = FiniteSet.empty[Int].insert(0).insert(1)
+        val subsets = stored.power
+        val words = Sequence.words(bits, stored.cardinality)
+        Enumeration.count(subsets) == Enumeration.count(words)
+          && Enumeration.count(subsets) == subsets.toList.length
+          && Enumeration.count(words) == words.toList.length
+      }
     )
   )
 
