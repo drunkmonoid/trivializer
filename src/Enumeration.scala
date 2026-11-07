@@ -122,4 +122,33 @@ object Enumeration:
   def wordToSubset(ambient: FiniteSet.Set[Int], word: Sequence.Sequence[Int]): FiniteSet.Set[Int] =
     ambient.toList.zip(word.toList).foldLeft(FiniteSet.empty[Int]) { (acc, pair) =>
       if pair._2 == 1 then acc.insert(pair._1) else acc
+
+  def permutationToMap[A: Ordering](
+      permutation: Permutation.Permutation[A]
+  ): Function.Function[A, A] =
+    val pairs = permutation.ambient.toList.zip(permutation.sequence.toList).foldLeft(FiniteSet.empty[(A, A)]) {
+      (acc, pair) => acc.insert(pair)
+    }
+    Function.tryOfRelation(Relation.ofPairs(pairs)).get
+
+  def mapToPermutation[A: Ordering](
+      ambient: FiniteSet.Set[A],
+      function: Function.Function[A, A]
+  ): Option[Permutation.Permutation[A]] =
+    val images = ambient.toList.foldRight(Sequence.empty[A]) { (element, acc) =>
+      function(element) match
+        case Some(image) => Sequence.cons(image, acc)
+        case None        => acc
+    }
+    Permutation.tryOf(ambient, images)
+
+  def permutationsToBijections[A: Ordering](
+      ambient: FiniteSet.Set[A]
+  ): Function.Function[Permutation.Permutation[A], Function.Function[A, A]] =
+    val pairs = permutations(ambient).toList.foldLeft(
+      FiniteSet.empty[(Permutation.Permutation[A], Function.Function[A, A])]
+    ) { (acc, permutation) =>
+      acc.insert((permutation, permutationToMap(permutation)))
+    }
+    Function.tryOfRelation(Relation.ofPairs(pairs)).get
     }

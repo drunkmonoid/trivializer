@@ -488,6 +488,21 @@ package trivializer
           && Enumeration.wordToSubset(stored, word).equal(chosen)
           && forward.isBijective(stored.power, Sequence.words(bits, stored.cardinality))
       }
+    ),
+    check(
+      "permutation-bijection", {
+        val identity = Permutation.tryOf(
+          stored,
+          Sequence.cons(0, Sequence.cons(1, Sequence.cons(2, Sequence.empty)))
+        ).get
+        val map = Enumeration.permutationToMap(identity)
+        val back = Enumeration.mapToPermutation(stored, map)
+        val family = Enumeration.permutationsToBijections(stored)
+        back == Some(identity)
+          && map(0) == Some(0)
+          && map(2) == Some(2)
+          && family.isBijective(Enumeration.permutations(stored), Enumeration.bijections(stored, stored))
+      }
     )
   )
 
