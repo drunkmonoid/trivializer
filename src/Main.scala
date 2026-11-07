@@ -503,6 +503,18 @@ package trivializer
           && map(2) == Some(2)
           && family.isBijective(Enumeration.permutations(stored), Enumeration.bijections(stored, stored))
       }
+    ),
+    check(
+      "pascal-split", {
+        val element = 0
+        val k = 1
+        val without = stored.remove(element)
+        val split = Enumeration.pascalSplit(stored, element, k)
+        val tagged = FiniteSet.sum(without.kSubsets(k), without.kSubsets(k - 1))
+        split(FiniteSet.singleton(0)) == Some(FiniteSet.injectRight(FiniteSet.empty[Int]))
+          && split(FiniteSet.singleton(1)) == Some(FiniteSet.injectLeft(FiniteSet.singleton(1)))
+          && split.isBijective(stored.kSubsets(k), tagged)
+      }
     )
   )
 

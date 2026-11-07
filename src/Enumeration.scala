@@ -152,3 +152,18 @@ object Enumeration:
       acc.insert((permutation, permutationToMap(permutation)))
     }
     Function.tryOfRelation(Relation.ofPairs(pairs)).get
+
+  def pascalSplit[A: Ordering](
+      ambient: FiniteSet.Set[A],
+      element: A,
+      k: Int
+  ): Function.Function[FiniteSet.Set[A], Tagged[FiniteSet.Set[A], FiniteSet.Set[A]]] =
+    val pairs = ambient.kSubsets(k).toList.foldLeft(
+      FiniteSet.empty[(FiniteSet.Set[A], Tagged[FiniteSet.Set[A], FiniteSet.Set[A]])]
+    ) { (acc, subset) =>
+      val tag =
+        if subset.contains(element) then FiniteSet.injectRight(subset.remove(element))
+        else FiniteSet.injectLeft(subset)
+      acc.insert((subset, tag))
+    }
+    Function.tryOfRelation(Relation.ofPairs(pairs)).get
