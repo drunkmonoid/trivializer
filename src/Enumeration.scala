@@ -78,3 +78,9 @@ object Enumeration:
       codomain: FiniteSet.Set[B]
   ): FiniteSet.Set[Function.Function[A, B]] =
     functions(domain, codomain).filter(_.isSurjective(domain, codomain))
+
+  def bijections[A: Ordering, B: Ordering](
+      domain: FiniteSet.Set[A],
+      codomain: FiniteSet.Set[B]
+  ): FiniteSet.Set[Function.Function[A, B]] =
+    functions(domain, codomain).filter(_.isBijective(domain, codomain))

@@ -362,6 +362,21 @@ package trivializer
           && Enumeration.functions(domain, codomain).toList.exists(function => !family.contains(function))
           && family.cardinality == family.toList.length
       }
+    ),
+    check(
+      "bijections", {
+        val domain = FiniteSet.empty[Int].insert(0).insert(1)
+        val family = Enumeration.bijections(domain, domain)
+        val larger = domain.insert(2)
+        family.toList.map(function => Function.relation(function).pairs.toList) == List(
+          List((0, 0), (1, 1)),
+          List((0, 1), (1, 0))
+        )
+          && family.toList.forall(_.isBijective(domain, domain))
+          && Enumeration.bijections(domain, larger).cardinality == 0
+          && Enumeration.injections(domain, larger).cardinality == Enumeration.injections(domain, larger).toList.length
+          && family.cardinality == family.toList.length
+      }
     )
   )
 
