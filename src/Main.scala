@@ -439,6 +439,17 @@ package trivializer
           && Enumeration.count(words) == words.toList.length
           && Enumeration.count(pairs) == pairs.toList.length
       }
+    ),
+    check(
+      "function-word", {
+        val domain = FiniteSet.empty[Int].insert(0).insert(1)
+        val codomain = FiniteSet.empty[Int].insert(5).insert(6)
+        val maps = Enumeration.functions(domain, codomain)
+        val words = Sequence.words(codomain, domain.cardinality)
+        Enumeration.count(maps) == Enumeration.count(words)
+          && Enumeration.count(maps) == maps.toList.length
+          && Enumeration.count(words) == words.toList.length
+      }
     )
   )
 
