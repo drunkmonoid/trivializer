@@ -450,6 +450,21 @@ package trivializer
           && Enumeration.count(maps) == maps.toList.length
           && Enumeration.count(words) == words.toList.length
       }
+    ),
+    check(
+      "pascal", {
+        val element = 0
+        val k = 1
+        val without = stored.remove(element)
+        val omitting = without.kSubsets(k)
+        val containing = without.kSubsets(k - 1)
+        val tagged = FiniteSet.sum(omitting, containing)
+        val whole = stored.kSubsets(k)
+        Enumeration.count(whole) == Enumeration.count(tagged)
+          && Enumeration.count(whole) == whole.toList.length
+          && Enumeration.count(omitting) == omitting.toList.length
+          && Enumeration.count(containing) == containing.toList.length
+      }
     )
   )
 
