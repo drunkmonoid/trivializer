@@ -71,3 +71,6 @@ object Graph:
       vertices.toList match
         case Nil        => true
         case start :: _ => reachable(start).get.equal(vertices)
+
+    def isTree(using Ordering[A]): Boolean =
+      isConnected && Enumeration.count(edges) + 1 == Enumeration.count(vertices)

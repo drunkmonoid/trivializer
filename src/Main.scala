@@ -599,6 +599,19 @@ package trivializer
         val leftOut = Graph.tryOf(stored, FiniteSet.singleton(edge)).get
         path.isConnected && !leftOut.isConnected
       }
+    ),
+    check(
+      "tree", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val closing = FiniteSet.empty[Int].insert(0).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        val cycle = Graph.tryOf(stored, path.edges.insert(closing)).get
+        path.isTree
+          && !cycle.isTree
+          && Enumeration.count(path.edges) + 1 == Enumeration.count(path.vertices)
+          && Enumeration.count(cycle.edges) + 1 != Enumeration.count(cycle.vertices)
+      }
     )
   )
 
