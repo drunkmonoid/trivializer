@@ -168,6 +168,16 @@ package trivializer
           && Sequence.words(FiniteSet.empty[Int], 2).cardinality == 0
           && Sequence.words(FiniteSet.empty[Int], 0).cardinality == 1
       }
+    ),
+    check(
+      "multiset", {
+        val bag = Multiset.empty[Int].add(1).add(1).add(2)
+        bag.multiplicity(1) == 2
+          && bag.multiplicity(2) == 1
+          && bag.multiplicity(3) == 0
+          && bag.support.toList == List(1, 2)
+          && bag.support.cardinality == 2
+      }
     )
   )
 
