@@ -66,3 +66,8 @@ object Graph:
               else walk(neighbors(current).get.toList ++ rest, seen.insert(current))
 
         Some(walk(List(start), FiniteSet.empty[A]))
+
+    def isConnected(using Ordering[A]): Boolean =
+      vertices.toList match
+        case Nil        => true
+        case start :: _ => reachable(start).get.equal(vertices)
