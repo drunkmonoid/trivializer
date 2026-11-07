@@ -515,6 +515,19 @@ package trivializer
           && split(FiniteSet.singleton(1)) == Some(FiniteSet.injectLeft(FiniteSet.singleton(1)))
           && split.isBijective(stored.kSubsets(k), tagged)
       }
+    ),
+    check(
+      "word-split", {
+        val alphabet = FiniteSet.empty[Int].insert(0).insert(1)
+        val k = 2
+        val word = Sequence.cons(0, Sequence.cons(1, Sequence.empty))
+        val prefix = Sequence.cons(0, Sequence.empty)
+        val split = Enumeration.splitWord(alphabet, k)
+        val product = FiniteSet.product(alphabet, Sequence.words(alphabet, k - 1))
+        split(word) == Some((1, prefix))
+          && Enumeration.joinWord(1, prefix) == word
+          && split.isBijective(Sequence.words(alphabet, k), product)
+      }
     )
   )
 

@@ -167,3 +167,19 @@ object Enumeration:
       acc.insert((subset, tag))
     }
     Function.tryOfRelation(Relation.ofPairs(pairs)).get
+
+  def splitWord[A: Ordering](
+      alphabet: FiniteSet.Set[A],
+      k: Int
+  ): Function.Function[Sequence.Sequence[A], (A, Sequence.Sequence[A])] =
+    val pairs = Sequence.words(alphabet, k).toList.foldLeft(
+      FiniteSet.empty[(Sequence.Sequence[A], (A, Sequence.Sequence[A]))]
+    ) { (acc, word) =>
+      val letters = word.toList
+      val prefix = letters.init.foldRight(Sequence.empty[A])(Sequence.cons)
+      acc.insert((word, (letters.last, prefix)))
+    }
+    Function.tryOfRelation(Relation.ofPairs(pairs)).get
+
+  def joinWord[A](last: A, prefix: Sequence.Sequence[A]): Sequence.Sequence[A] =
+    prefix.toList.foldRight(Sequence.cons(last, Sequence.empty[A]))(Sequence.cons)
