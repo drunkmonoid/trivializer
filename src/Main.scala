@@ -553,6 +553,18 @@ package trivializer
           && path.neighbors(0).get.equal(FiniteSet.singleton(1))
           && path.neighbors(3).isEmpty
       }
+    ),
+    check(
+      "degree", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        val atMiddle = path.edges.filter(edge => edge.contains(1))
+        path.degree(1) == Some(Enumeration.count(atMiddle))
+          && path.degree(0) == Some(1)
+          && Enumeration.count(atMiddle) == atMiddle.toList.length
+          && path.degree(3).isEmpty
+      }
     )
   )
 

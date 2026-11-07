@@ -35,3 +35,9 @@ object Graph:
               if summon[Ordering[A]].equiv(other, vertex) then acc else acc.insert(other)
             }
         })
+
+    def degree(vertex: A)(using Ordering[A]): Option[Int] =
+      if !vertices.contains(vertex) then None
+      else
+        val incident = edges.filter(edge => edge.contains(vertex))
+        Some(Enumeration.count(incident))
