@@ -565,6 +565,19 @@ package trivializer
           && Enumeration.count(atMiddle) == atMiddle.toList.length
           && path.degree(3).isEmpty
       }
+    ),
+    check(
+      "walk", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        val along = Sequence.cons(0, Sequence.cons(1, Sequence.cons(2, Sequence.empty)))
+        val jump = Sequence.cons(0, Sequence.cons(2, Sequence.empty))
+        path.tryWalk(along) == Some(along)
+          && path.tryWalk(jump).isEmpty
+          && path.tryWalk(Sequence.cons(0, Sequence.empty)) == Some(Sequence.cons(0, Sequence.empty))
+          && path.tryWalk(Sequence.empty).isEmpty
+      }
     )
   )
 

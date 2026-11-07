@@ -41,3 +41,16 @@ object Graph:
       else
         val incident = edges.filter(edge => edge.contains(vertex))
         Some(Enumeration.count(incident))
+
+    def tryWalk(steps: Sequence.Sequence[A])(using Ordering[A]): Option[Sequence.Sequence[A]] =
+      def linked(current: A, rest: List[A]): Boolean =
+        rest match
+          case Nil => true
+          case next :: tail =>
+            val step = FiniteSet.empty[A].insert(current).insert(next)
+            edges.contains(step) && linked(next, tail)
+
+      val letters = steps.toList
+      if letters.nonEmpty && letters.forall(vertices.contains) && linked(letters.head, letters.tail) then
+        Some(steps)
+      else None
