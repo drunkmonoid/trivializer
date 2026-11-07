@@ -397,6 +397,18 @@ package trivializer
           && Enumeration.count(subsets) == subsets.toList.length
           && Enumeration.count(words) == words.toList.length
       }
+    ),
+    check(
+      "complement-counts", {
+        val size = stored.cardinality
+        val k = 1
+        val left = stored.kSubsets(k)
+        val right = stored.kSubsets(size - k)
+        Enumeration.count(left) == Enumeration.count(right)
+          && Enumeration.count(left) == left.toList.length
+          && Enumeration.count(right) == right.toList.length
+          && Enumeration.count(stored.kSubsets(0)) == Enumeration.count(stored.kSubsets(size))
+      }
     )
   )
 
