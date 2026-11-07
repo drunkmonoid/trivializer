@@ -543,6 +543,16 @@ package trivializer
           && tooBig.isEmpty
           && outside.isEmpty
       }
+    ),
+    check(
+      "neighbors", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        path.neighbors(1).get.equal(FiniteSet.empty[Int].insert(0).insert(2))
+          && path.neighbors(0).get.equal(FiniteSet.singleton(1))
+          && path.neighbors(3).isEmpty
+      }
     )
   )
 

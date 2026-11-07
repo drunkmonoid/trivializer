@@ -24,3 +24,14 @@ object Graph:
     def edges: FiniteSet.Set[FiniteSet.Set[A]] =
       val (_, edges) = parts(graph)
       edges
+
+    def neighbors(vertex: A)(using Ordering[A]): Option[FiniteSet.Set[A]] =
+      if !vertices.contains(vertex) then None
+      else
+        Some(edges.toList.foldLeft(FiniteSet.empty[A]) { (acc, edge) =>
+          if !edge.contains(vertex) then acc
+          else
+            edge.toList.foldLeft(acc) { (acc, other) =>
+              if summon[Ordering[A]].equiv(other, vertex) then acc else acc.insert(other)
+            }
+        })
