@@ -86,3 +86,14 @@ object Enumeration:
     functions(domain, codomain).filter(_.isBijective(domain, codomain))
 
   def count[A](family: FiniteSet.Set[A]): Int = family.cardinality
+
+  def subsetsBySize[A: Ordering](
+      set: FiniteSet.Set[A]
+  ): FiniteSet.Set[(Int, FiniteSet.Set[A])] =
+    def gather(k: Int, acc: FiniteSet.Set[(Int, FiniteSet.Set[A])]): FiniteSet.Set[(Int, FiniteSet.Set[A])] =
+      if k > set.cardinality then acc
+      else
+        val tagged = set.kSubsets(k).map(subset => (k, subset))
+        gather(k + 1, acc.union(tagged))
+
+    gather(0, FiniteSet.empty)

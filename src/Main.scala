@@ -409,6 +409,15 @@ package trivializer
           && Enumeration.count(right) == right.toList.length
           && Enumeration.count(stored.kSubsets(0)) == Enumeration.count(stored.kSubsets(size))
       }
+    ),
+    check(
+      "subsets-add", {
+        val tagged = Enumeration.subsetsBySize(stored)
+        val recovered = tagged.map(FiniteSet.snd)
+        recovered.equal(stored.power)
+          && Enumeration.count(tagged) == Enumeration.count(stored.power)
+          && Enumeration.count(tagged) == tagged.toList.length
+      }
     )
   )
 
