@@ -427,6 +427,18 @@ package trivializer
           && Enumeration.count(maps) == maps.toList.length
           && Enumeration.count(perms) == perms.toList.length
       }
+    ),
+    check(
+      "longer-word", {
+        val alphabet = FiniteSet.empty[Int].insert(0).insert(1)
+        val k = 2
+        val words = Sequence.words(alphabet, k)
+        val shorter = Sequence.words(alphabet, k - 1)
+        val pairs = FiniteSet.product(alphabet, shorter)
+        Enumeration.count(words) == Enumeration.count(pairs)
+          && Enumeration.count(words) == words.toList.length
+          && Enumeration.count(pairs) == pairs.toList.length
+      }
     )
   )
 
