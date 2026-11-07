@@ -202,6 +202,21 @@ package trivializer
               && Combination.tryOf(stored, FiniteSet.singleton(3), 1).isEmpty
           case None => false
       }
+    ),
+    check(
+      "permutation", {
+        val cycle = Sequence.cons(1, Sequence.cons(2, Sequence.cons(0, Sequence.empty)))
+        val repeated = Sequence.cons(1, Sequence.cons(1, Sequence.cons(0, Sequence.empty)))
+        val identityOrder = Sequence.cons(0, Sequence.cons(1, Sequence.cons(2, Sequence.empty)))
+        Permutation.tryOf(stored, cycle) match
+          case Some(cyclePerm) =>
+            val undone = cyclePerm.compose(cyclePerm.inverse)
+            val squared = cyclePerm.compose(cyclePerm)
+            undone.exists(_.sequence.toList == identityOrder.toList)
+              && squared.exists(_.sequence.toList == List(2, 0, 1))
+              && Permutation.tryOf(stored, repeated).isEmpty
+          case None => false
+      }
     )
   )
 
