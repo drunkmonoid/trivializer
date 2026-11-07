@@ -5,6 +5,12 @@ package trivializer
 object Graph:
   opaque type Graph[A] = (FiniteSet.Set[A], FiniteSet.Set[FiniteSet.Set[A]])
 
+  given [A: Ordering]: Ordering[Graph[A]] with
+    def compare(left: Graph[A], right: Graph[A]): Int =
+      val byVertices = summon[Ordering[FiniteSet.Set[A]]].compare(left.vertices, right.vertices)
+      if byVertices != 0 then byVertices
+      else summon[Ordering[FiniteSet.Set[FiniteSet.Set[A]]]].compare(left.edges, right.edges)
+
   def tryOf[A: Ordering](
       vertices: FiniteSet.Set[A],
       edges: FiniteSet.Set[FiniteSet.Set[A]]
@@ -74,3 +80,64 @@ object Graph:
 
     def isTree(using Ordering[A]): Boolean =
       isConnected && Enumeration.count(edges) + 1 == Enumeration.count(vertices)
+
+  def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
+    if !graph.isTree then None
+    else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])
+    else
+      def step(
+          vertices: FiniteSet.Set[A],
+          edges: FiniteSet.Set[FiniteSet.Set[A]],
+          built: List[A]
+      ): List[A] =
+        if vertices.cardinality == 2 then built.reverse
+        else
+          val leaf = vertices.toList.find { vertex =>
+            edges.toList.count(edge => edge.contains(vertex)) == 1
+          }.get
+          val edge = edges.toList.find(edge => edge.contains(leaf)).get
+          val neighbor = edge.toList.find(vertex => !summon[Ordering[A]].equiv(vertex, leaf)).get
+          step(vertices.remove(leaf), edges.remove(edge), neighbor :: built)
+
+      val letters = step(graph.vertices, graph.edges, Nil)
+      Some(letters.foldRight(Sequence.empty[A])(Sequence.cons))
+
+  def pruferDecode[A: Ordering](
+      vertices: FiniteSet.Set[A],
+      word: Sequence.Sequence[A]
+  ): Option[Graph[A]] =
+    val letters = word.toList
+    if vertices.cardinality < 2 then
+      if letters.isEmpty then tryOf(vertices, FiniteSet.empty[FiniteSet.Set[A]]) else None
+    else if letters.length + 2 != vertices.cardinality || !letters.forall(vertices.contains) then None
+    else
+      val same = summon[Ordering[A]].equiv
+      val degrees = vertices.toList.map(vertex => (vertex, 1 + letters.count(letter => same(letter, vertex))))
+      def take(
+          code: List[A],
+          degrees: List[(A, Int)],
+          edges: FiniteSet.Set[FiniteSet.Set[A]]
+      ): FiniteSet.Set[FiniteSet.Set[A]] =
+        code match
+          case Nil =>
+            val last = degrees.filter((_, degree) => degree == 1).map((vertex, _) => vertex)
+            edges.insert(FiniteSet.empty[A].insert(last.head).insert(last.tail.head))
+          case symbol :: rest =>
+            val leaf = degrees.filter((_, degree) => degree == 1).map((vertex, _) => vertex).min
+            val next = degrees.map { (vertex, degree) =>
+              if same(vertex, leaf) || same(vertex, symbol) then (vertex, degree - 1) else (vertex, degree)
+            }
+            take(rest, next, edges.insert(FiniteSet.empty[A].insert(leaf).insert(symbol)))
+
+      tryOf(vertices, take(letters, degrees, FiniteSet.empty))
+
+  def labeledTrees[A: Ordering](vertices: FiniteSet.Set[A]): FiniteSet.Set[Graph[A]] =
+    if vertices.cardinality < 2 then
+      FiniteSet.singleton(tryOf(vertices, FiniteSet.empty[FiniteSet.Set[A]]).get)
+    else
+      val length = vertices.cardinality - 2
+      Sequence.words(vertices, length).toList.foldLeft(FiniteSet.empty[Graph[A]]) { (acc, word) =>
+        pruferDecode(vertices, word) match
+          case Some(tree) => acc.insert(tree)
+          case None       => acc
+      }

@@ -612,6 +612,25 @@ package trivializer
           && Enumeration.count(path.edges) + 1 == Enumeration.count(path.vertices)
           && Enumeration.count(cycle.edges) + 1 != Enumeration.count(cycle.vertices)
       }
+    ),
+    check(
+      "prufer", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        val word = Sequence.cons(1, Sequence.empty)
+        val decoded = Graph.pruferDecode(stored, word)
+        val trees = Graph.labeledTrees(stored)
+        val words = Sequence.words(stored, stored.cardinality - 2)
+        val one = Graph.tryOf(FiniteSet.singleton(0), FiniteSet.empty).get
+        Graph.pruferEncode(path) == Some(word)
+          && decoded.get.edges.equal(path.edges)
+          && Enumeration.count(trees) == Enumeration.count(words)
+          && Enumeration.count(trees) == trees.toList.length
+          && Enumeration.count(words) == words.toList.length
+          && Graph.pruferEncode(one) == Some(Sequence.empty)
+          && Graph.pruferEncode(Graph.tryOf(stored, path.edges.insert(FiniteSet.empty[Int].insert(0).insert(2))).get).isEmpty
+      }
     )
   )
 
