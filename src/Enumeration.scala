@@ -84,3 +84,5 @@ object Enumeration:
       codomain: FiniteSet.Set[B]
   ): FiniteSet.Set[Function.Function[A, B]] =
     functions(domain, codomain).filter(_.isBijective(domain, codomain))
+
+  def count[A](family: FiniteSet.Set[A]): Int = family.cardinality

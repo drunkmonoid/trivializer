@@ -377,6 +377,16 @@ package trivializer
           && Enumeration.injections(domain, larger).cardinality == Enumeration.injections(domain, larger).toList.length
           && family.cardinality == family.toList.length
       }
+    ),
+    check(
+      "count", {
+        val subsets = stored.power
+        val perms = Enumeration.permutations(stored)
+        Enumeration.count(subsets) == subsets.cardinality
+          && Enumeration.count(subsets) == subsets.toList.length
+          && Enumeration.count(perms) == perms.toList.length
+          && Enumeration.count(perms) == perms.cardinality
+      }
     )
   )
 
