@@ -22,6 +22,21 @@ object FiniteSet:
 
   def empty[A]: Set[A] = Nil
 
+  given [A: Ordering]: Ordering[Set[A]] with
+    def compare(left: Set[A], right: Set[A]): Int =
+      def walk(xs: List[A], ys: List[A]): Int =
+        (xs, ys) match
+          case (Nil, Nil) => 0
+          case (Nil, _)   => -1
+          case (_, Nil)   => 1
+          case (x :: xt, y :: yt) =>
+            val here = summon[Ordering[A]].compare(x, y)
+            if here != 0 then here else walk(xt, yt)
+
+      val xs: List[A] = left
+      val ys: List[A] = right
+      walk(xs, ys)
+
   private def insertInto[A: Ordering](x: A, xs: List[A]): List[A] =
     xs match
       case Nil                                    => x :: Nil

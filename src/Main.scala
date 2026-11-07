@@ -217,6 +217,31 @@ package trivializer
               && Permutation.tryOf(stored, repeated).isEmpty
           case None => false
       }
+    ),
+    check(
+      "partition", {
+        val alone = FiniteSet.singleton(0)
+        val rest = FiniteSet.empty[Int].insert(1).insert(2)
+        val blocks = FiniteSet.empty[FiniteSet.Set[Int]].insert(alone).insert(rest)
+        val overlap = FiniteSet
+          .empty[FiniteSet.Set[Int]]
+          .insert(FiniteSet.empty[Int].insert(0).insert(1))
+          .insert(FiniteSet.empty[Int].insert(1).insert(2))
+        val gap = FiniteSet.empty[FiniteSet.Set[Int]].insert(alone).insert(FiniteSet.singleton(1))
+        val emptyBlock = FiniteSet
+          .empty[FiniteSet.Set[Int]]
+          .insert(FiniteSet.empty[Int])
+          .insert(stored)
+        Partition.tryOf(stored, blocks) match
+          case Some(partition) =>
+            partition.blocks.cardinality == 2
+              && partition.ambient.equal(stored)
+              && Partition.tryOf(stored, overlap).isEmpty
+              && Partition.tryOf(stored, gap).isEmpty
+              && Partition.tryOf(stored, emptyBlock).isEmpty
+              && Partition.tryOf(FiniteSet.empty[Int], FiniteSet.empty[FiniteSet.Set[Int]]).isDefined
+          case None => false
+      }
     )
   )
 
