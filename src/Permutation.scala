@@ -16,19 +16,41 @@ object Permutation:
     if order.length == ambient.cardinality && seen.equal(ambient) then Some((ambient, order))
     else None
 
+  private def parts[A](
+      permutation: Permutation[A]
+  ): (FiniteSet.Set[A], Sequence.Sequence[A]) = permutation
+
   private def imageOf[A: Ordering](permutation: Permutation[A], element: A): Option[A] =
-    val (ambient, order): (FiniteSet.Set[A], Sequence.Sequence[A]) = permutation
+    val (ambient, order) = parts(permutation)
     val index = ambient.toList.indexWhere(item => summon[Ordering[A]].equiv(item, element))
     if index < 0 then None else order.item(index)
 
   extension [A: Ordering](permutation: Permutation[A])
     def ambient: FiniteSet.Set[A] =
-      val (set, _): (FiniteSet.Set[A], Sequence.Sequence[A]) = permutation
+      val (set, _) = parts(permutation)
       set
 
     def sequence: Sequence.Sequence[A] =
-      val (_, order): (FiniteSet.Set[A], Sequence.Sequence[A]) = permutation
+      val (_, order) = parts(permutation)
       order
+
+    def at(element: A): Option[A] = imageOf(permutation, element)
+
+    def act(elements: FiniteSet.Set[A]): Option[FiniteSet.Set[A]] =
+      if !elements.isSubset(ambient) then None
+      else
+        Some(elements.toList.foldLeft(FiniteSet.empty[A]) { (acc, element) =>
+          acc.insert(imageOf(permutation, element).get)
+        })
+
+    def orbit(element: A): Option[FiniteSet.Set[A]] =
+      if imageOf(permutation, element).isEmpty then None
+      else
+        def walk(current: A, seen: FiniteSet.Set[A]): FiniteSet.Set[A] =
+          if seen.contains(current) then seen
+          else walk(imageOf(permutation, current).get, seen.insert(current))
+
+        Some(walk(element, FiniteSet.empty[A]))
 
     def inverse: Permutation[A] =
       val elements = ambient.toList

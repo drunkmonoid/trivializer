@@ -242,6 +242,22 @@ package trivializer
               && Partition.tryOf(FiniteSet.empty[Int], FiniteSet.empty[FiniteSet.Set[Int]]).isDefined
           case None => false
       }
+    ),
+    check(
+      "action", {
+        val cycle = Sequence.cons(1, Sequence.cons(2, Sequence.cons(0, Sequence.empty)))
+        val swap = Sequence.cons(1, Sequence.cons(0, Sequence.cons(2, Sequence.empty)))
+        val moved = FiniteSet.empty[Int].insert(0).insert(1)
+        (Permutation.tryOf(stored, cycle), Permutation.tryOf(stored, swap)) match
+          case (Some(cyclePerm), Some(swapPerm)) =>
+            cyclePerm.at(0) == Some(1)
+              && cyclePerm.act(moved).exists(_.toList == List(1, 2))
+              && cyclePerm.orbit(0).exists(_.equal(stored))
+              && swapPerm.orbit(2).exists(_.toList == List(2))
+              && swapPerm.orbit(0).exists(_.toList == List(0, 1))
+              && cyclePerm.at(9).isEmpty
+          case _ => false
+      }
     )
   )
 
