@@ -284,6 +284,21 @@ package trivializer
           && stored.kSubsets(4).cardinality == 0
           && stored.kSubsets(1).cardinality == stored.kSubsets(1).toList.length
       }
+    ),
+    check(
+      "permutations", {
+        val family = Enumeration.permutations(stored)
+        family.toList.map(_.sequence.toList) == List(
+          List(0, 1, 2),
+          List(0, 2, 1),
+          List(1, 0, 2),
+          List(1, 2, 0),
+          List(2, 0, 1),
+          List(2, 1, 0)
+        )
+          && family.cardinality == family.toList.length
+          && Enumeration.permutations(FiniteSet.empty[Int]).cardinality == 1
+      }
     )
   )
 

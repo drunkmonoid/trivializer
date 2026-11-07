@@ -5,6 +5,10 @@ package trivializer
 object Permutation:
   opaque type Permutation[A] = (FiniteSet.Set[A], Sequence.Sequence[A])
 
+  given [A: Ordering]: Ordering[Permutation[A]] with
+    def compare(left: Permutation[A], right: Permutation[A]): Int =
+      summon[Ordering[Sequence.Sequence[A]]].compare(left.sequence, right.sequence)
+
   private def fromList[A](items: List[A]): Sequence.Sequence[A] =
     items.foldRight(Sequence.empty[A])(Sequence.cons)
 
