@@ -154,6 +154,20 @@ package trivializer
           && repeated.item(3) == None
           && Sequence.empty[Int].length == 0
       }
+    ),
+    check(
+      "words", {
+        val alphabet = FiniteSet.empty[Int].insert(0).insert(1)
+        val found = Sequence.words(alphabet, 2)
+        def word(first: Int, second: Int): Sequence.Sequence[Int] =
+          Sequence.cons(first, Sequence.cons(second, Sequence.empty))
+        found.toList == List(word(0, 0), word(0, 1), word(1, 0), word(1, 1))
+          && found.cardinality == found.toList.length
+          && !found.contains(word(0, 2))
+          && Sequence.words(alphabet, 0).toList == List(Sequence.empty[Int])
+          && Sequence.words(FiniteSet.empty[Int], 2).cardinality == 0
+          && Sequence.words(FiniteSet.empty[Int], 0).cardinality == 1
+      }
     )
   )
 
