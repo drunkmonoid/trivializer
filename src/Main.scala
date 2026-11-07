@@ -418,6 +418,15 @@ package trivializer
           && Enumeration.count(tagged) == Enumeration.count(stored.power)
           && Enumeration.count(tagged) == tagged.toList.length
       }
+    ),
+    check(
+      "bijections-and-permutations", {
+        val maps = Enumeration.bijections(stored, stored)
+        val perms = Enumeration.permutations(stored)
+        Enumeration.count(maps) == Enumeration.count(perms)
+          && Enumeration.count(maps) == maps.toList.length
+          && Enumeration.count(perms) == perms.toList.length
+      }
     )
   )
 
