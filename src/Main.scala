@@ -477,6 +477,17 @@ package trivializer
           && forward.isBijective(stored.kSubsets(1), stored.kSubsets(stored.cardinality - 1))
           && Enumeration.count(stored.kSubsets(1)) == Enumeration.count(stored.kSubsets(stored.cardinality - 1))
       }
+    ),
+    check(
+      "subset-word", {
+        val bits = FiniteSet.empty[Int].insert(0).insert(1)
+        val chosen = FiniteSet.empty[Int].insert(0).insert(2)
+        val word = Sequence.cons(1, Sequence.cons(0, Sequence.cons(1, Sequence.empty)))
+        val forward = Enumeration.subsetToWord(stored)
+        forward(chosen) == Some(word)
+          && Enumeration.wordToSubset(stored, word).equal(chosen)
+          && forward.isBijective(stored.power, Sequence.words(bits, stored.cardinality))
+      }
     )
   )
 

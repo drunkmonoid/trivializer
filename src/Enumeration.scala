@@ -106,3 +106,20 @@ object Enumeration:
       (acc, subset) => acc.insert((subset, ambient.difference(subset)))
     }
     Function.tryOfRelation(Relation.ofPairs(pairs)).get
+
+  def subsetToWord(
+      ambient: FiniteSet.Set[Int]
+  ): Function.Function[FiniteSet.Set[Int], Sequence.Sequence[Int]] =
+    val pairs =
+      ambient.power.toList.foldLeft(FiniteSet.empty[(FiniteSet.Set[Int], Sequence.Sequence[Int])]) {
+        (acc, subset) =>
+          val letters = ambient.toList.map(element => if subset.contains(element) then 1 else 0)
+          val word = letters.foldRight(Sequence.empty[Int])(Sequence.cons)
+          acc.insert((subset, word))
+      }
+    Function.tryOfRelation(Relation.ofPairs(pairs)).get
+
+  def wordToSubset(ambient: FiniteSet.Set[Int], word: Sequence.Sequence[Int]): FiniteSet.Set[Int] =
+    ambient.toList.zip(word.toList).foldLeft(FiniteSet.empty[Int]) { (acc, pair) =>
+      if pair._2 == 1 then acc.insert(pair._1) else acc
+    }
