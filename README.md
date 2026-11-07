@@ -16,6 +16,14 @@ Read the modules in this order:
 8. `Permutation` is one sequence that contains each element of the ambient set once, hence one bijection. `compose` and `inverse` act on that value. `at` and `act` apply it to one element and to one subset. `orbit` walks a single element.
 9. `Partition` is a set of nonempty blocks. Construction succeeds when the blocks are pairwise disjoint and their union is the ambient set.
 
+The enumeration layer stores every object of a given kind. A count is the cardinality of a stored family. An identity is two stored families with the same count, or one stored bijection between them. A closed form is not the definition.
+
+Read these next:
+
+1. `FiniteSet.power` keeps or drops each element and stores both results. `kSubsets` keeps the subsets whose stored size is `k`.
+2. `Enumeration` stores the permutations, the set-partitions, and the functions from one set to another. Injections, surjections, and bijections are the functions that pass the predicate already stored on `Function`. `count` reads the cardinality of a family. `subsetsBySize` tags each subset by that size and covers the power set. `complement` sends a k-subset to its complement. `subsetToWord` and `wordToSubset` match a subset with the binary word of its membership. `permutationToMap` and `mapToPermutation` match a permutation with the bijection it stores. `pascalSplit` sends each k-subset to one side of the tagged union. `splitWord` and `joinWord` match a word with its last letter and its prefix.
+3. `Graph` stores vertices and edges that are 2-subsets of those vertices. `neighbors` is the other ends of the edges at one vertex. `degree` counts those edges. `tryWalk` accepts a sequence whose consecutive pairs are stored edges. `reachable` walks neighbors from one vertex. `isConnected` asks whether that walk meets every vertex. `isTree` asks whether the graph is connected and the edge count is one less than the vertex count. `pruferEncode` and `pruferDecode` turn one tree into a word and back. `labeledTrees` stores every decoding of a word of length `|V| - 2` over the vertex set.
+
 ## Run
 
 This project targets Scala 3.9. Install [Scala CLI](https://scala-cli.virtuslab.org/), then from this directory:
@@ -28,7 +36,7 @@ Exit code 0 means every invariant above holds. Exit code 1 means one of them doe
 
 ## Next
 
-The enumeration layer stores every object of a given kind. `power` keeps or drops each element and stores both results. A count, later, is the cardinality of a stored family. Closed forms are not the definition.
+Unlabeled graphs. Isomorphism, and one canonical representative of a graph. A census of graphs up to isomorphism is that chunk.
 
 ## License
 
