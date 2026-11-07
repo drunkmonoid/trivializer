@@ -348,6 +348,20 @@ package trivializer
           && maps.toList.exists(function => !family.contains(function))
           && family.cardinality == family.toList.length
       }
+    ),
+    check(
+      "surjections", {
+        val domain = FiniteSet.empty[Int].insert(0).insert(1)
+        val codomain = FiniteSet.empty[Int].insert(0).insert(1)
+        val family = Enumeration.surjections(domain, codomain)
+        family.toList.map(function => Function.relation(function).pairs.toList) == List(
+          List((0, 0), (1, 1)),
+          List((0, 1), (1, 0))
+        )
+          && family.toList.forall(_.isSurjective(domain, codomain))
+          && Enumeration.functions(domain, codomain).toList.exists(function => !family.contains(function))
+          && family.cardinality == family.toList.length
+      }
     )
   )
 
