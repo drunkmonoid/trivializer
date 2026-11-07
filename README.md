@@ -28,7 +28,7 @@ Exit code 0 means every invariant above holds. Exit code 1 means one of them doe
 
 ## Next
 
-The next chunk enumerates every object of a given kind: all subsets, all words, all permutations, all partitions. A count is the cardinality of that enumeration. An identity is two enumerations with the same cardinality. That chunk is not started here.
+The enumeration layer stores every object of a given kind. `power` keeps or drops each element and stores both results. A count, later, is the cardinality of a stored family. Closed forms are not the definition.
 
 ## License
 

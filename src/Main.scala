@@ -258,6 +258,23 @@ package trivializer
               && cyclePerm.at(9).isEmpty
           case _ => false
       }
+    ),
+    check(
+      "power", {
+        val subsets = stored.power
+        subsets.toList.map(_.toList) == List(
+          Nil,
+          List(0),
+          List(0, 1),
+          List(0, 1, 2),
+          List(0, 2),
+          List(1),
+          List(1, 2),
+          List(2)
+        )
+          && subsets.cardinality == subsets.toList.length
+          && FiniteSet.empty[Int].power.toList.map(_.toList) == List(Nil)
+      }
     )
   )
 

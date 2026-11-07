@@ -130,6 +130,14 @@ object FiniteSet:
   def map[A, B: Ordering](f: A => B, set: Set[A]): Set[B] =
     set.foldLeft(empty[B])((acc, x) => insertInto(f(x), acc))
 
+  // Each element is kept or dropped. Both results are stored.
+  def power[A: Ordering](set: Set[A]): Set[Set[A]] =
+    val items: List[A] = set
+    items.foldLeft(singleton(empty[A])) { (families, element) =>
+      val grown = map((subset: Set[A]) => insert(element, subset), families)
+      unionLists(families, grown)
+    }
+
   extension [A](set: Set[A])
     def toList: List[A] = set
     def cardinality: Int = set.length
@@ -148,3 +156,5 @@ object FiniteSet:
       val items: List[A] = set
       items.filter(predicate)
     def map[B: Ordering](f: A => B): Set[B] = FiniteSet.map(f, set)
+    @targetName("powerExt")
+    def power: Set[Set[A]] = FiniteSet.power(set)
