@@ -5,6 +5,10 @@ package trivializer
 object Partition:
   opaque type Partition[A] = (FiniteSet.Set[A], FiniteSet.Set[FiniteSet.Set[A]])
 
+  given [A: Ordering]: Ordering[Partition[A]] with
+    def compare(left: Partition[A], right: Partition[A]): Int =
+      summon[Ordering[FiniteSet.Set[FiniteSet.Set[A]]]].compare(left.blocks, right.blocks)
+
   def tryOf[A: Ordering](
       ambient: FiniteSet.Set[A],
       blocks: FiniteSet.Set[FiniteSet.Set[A]]

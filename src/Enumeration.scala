@@ -21,3 +21,28 @@ object Enumeration:
         }
 
     place(ambient, Nil)
+
+  def setPartitions[A: Ordering](
+      ambient: FiniteSet.Set[A]
+  ): FiniteSet.Set[Partition.Partition[A]] =
+    def grow(
+        remaining: List[A],
+        blocks: List[FiniteSet.Set[A]]
+    ): FiniteSet.Set[Partition.Partition[A]] =
+      remaining match
+        case Nil =>
+          val stored =
+            blocks.foldLeft(FiniteSet.empty[FiniteSet.Set[A]])((acc, block) => acc.insert(block))
+          Partition.tryOf(ambient, stored) match
+            case Some(partition) => FiniteSet.singleton(partition)
+            case None            => FiniteSet.empty
+        case element :: rest =>
+          val intoExisting =
+            blocks.zipWithIndex.foldLeft(FiniteSet.empty[Partition.Partition[A]]) { (acc, indexed) =>
+              val (block, index) = indexed
+              val next = blocks.updated(index, block.insert(element))
+              acc.union(grow(rest, next))
+            }
+          intoExisting.union(grow(rest, blocks :+ FiniteSet.singleton(element)))
+
+    grow(ambient.toList, Nil)

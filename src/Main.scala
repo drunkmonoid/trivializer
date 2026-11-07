@@ -299,6 +299,20 @@ package trivializer
           && family.cardinality == family.toList.length
           && Enumeration.permutations(FiniteSet.empty[Int]).cardinality == 1
       }
+    ),
+    check(
+      "set-partitions", {
+        val family = Enumeration.setPartitions(stored)
+        family.toList.map(_.blocks.toList.map(_.toList)) == List(
+          List(List(0), List(1), List(2)),
+          List(List(0), List(1, 2)),
+          List(List(0, 1), List(2)),
+          List(List(0, 1, 2)),
+          List(List(0, 2), List(1))
+        )
+          && family.cardinality == family.toList.length
+          && Enumeration.setPartitions(FiniteSet.empty[Int]).cardinality == 1
+      }
     )
   )
 
