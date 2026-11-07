@@ -329,6 +329,25 @@ package trivializer
           && Enumeration.functions(FiniteSet.empty[Int], codomain).cardinality == 1
           && Enumeration.functions(domain, FiniteSet.empty[Int]).cardinality == 0
       }
+    ),
+    check(
+      "injections", {
+        val domain = FiniteSet.empty[Int].insert(0).insert(1)
+        val codomain = FiniteSet.empty[Int].insert(0).insert(1).insert(2)
+        val family = Enumeration.injections(domain, codomain)
+        val maps = Enumeration.functions(domain, codomain)
+        family.toList.map(function => Function.relation(function).pairs.toList) == List(
+          List((0, 0), (1, 1)),
+          List((0, 0), (1, 2)),
+          List((0, 1), (1, 0)),
+          List((0, 1), (1, 2)),
+          List((0, 2), (1, 0)),
+          List((0, 2), (1, 1))
+        )
+          && family.toList.forall(_.isInjective(domain, codomain))
+          && maps.toList.exists(function => !family.contains(function))
+          && family.cardinality == family.toList.length
+      }
     )
   )
 
