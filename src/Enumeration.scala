@@ -122,6 +122,7 @@ object Enumeration:
   def wordToSubset(ambient: FiniteSet.Set[Int], word: Sequence.Sequence[Int]): FiniteSet.Set[Int] =
     ambient.toList.zip(word.toList).foldLeft(FiniteSet.empty[Int]) { (acc, pair) =>
       if pair._2 == 1 then acc.insert(pair._1) else acc
+    }
 
   def permutationToMap[A: Ordering](
       permutation: Permutation.Permutation[A]
@@ -151,4 +152,3 @@ object Enumeration:
       acc.insert((permutation, permutationToMap(permutation)))
     }
     Function.tryOfRelation(Relation.ofPairs(pairs)).get
-    }
