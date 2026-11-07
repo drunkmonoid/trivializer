@@ -46,3 +46,23 @@ object Enumeration:
           intoExisting.union(grow(rest, blocks :+ FiniteSet.singleton(element)))
 
     grow(ambient.toList, Nil)
+
+  def functions[A: Ordering, B: Ordering](
+      domain: FiniteSet.Set[A],
+      codomain: FiniteSet.Set[B]
+  ): FiniteSet.Set[Function.Function[A, B]] =
+    def assign(
+        remaining: List[A],
+        pairs: FiniteSet.Set[(A, B)]
+    ): FiniteSet.Set[Function.Function[A, B]] =
+      remaining match
+        case Nil =>
+          Function.tryOfRelation(Relation.ofPairs(pairs)) match
+            case Some(function) => FiniteSet.singleton(function)
+            case None           => FiniteSet.empty
+        case element :: rest =>
+          codomain.toList.foldLeft(FiniteSet.empty[Function.Function[A, B]]) { (acc, image) =>
+            acc.union(assign(rest, pairs.insert((element, image))))
+          }
+
+    assign(domain.toList, FiniteSet.empty)

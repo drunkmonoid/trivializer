@@ -313,6 +313,22 @@ package trivializer
           && family.cardinality == family.toList.length
           && Enumeration.setPartitions(FiniteSet.empty[Int]).cardinality == 1
       }
+    ),
+    check(
+      "functions", {
+        val domain = FiniteSet.empty[Int].insert(0).insert(1)
+        val codomain = FiniteSet.empty[Int].insert(7).insert(8)
+        val family = Enumeration.functions(domain, codomain)
+        family.toList.map(function => Function.relation(function).pairs.toList) == List(
+          List((0, 7), (1, 7)),
+          List((0, 7), (1, 8)),
+          List((0, 8), (1, 7)),
+          List((0, 8), (1, 8))
+        )
+          && family.cardinality == family.toList.length
+          && Enumeration.functions(FiniteSet.empty[Int], codomain).cardinality == 1
+          && Enumeration.functions(domain, FiniteSet.empty[Int]).cardinality == 0
+      }
     )
   )
 

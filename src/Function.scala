@@ -5,6 +5,19 @@ package trivializer
 object Function:
   opaque type Function[A, B] = Relation.Relation[A, B]
 
+  given [A: Ordering, B: Ordering]: Ordering[Function[A, B]] with
+    def compare(left: Function[A, B], right: Function[A, B]): Int =
+      def walk(xs: List[(A, B)], ys: List[(A, B)]): Int =
+        (xs, ys) match
+          case (Nil, Nil) => 0
+          case (Nil, _)   => -1
+          case (_, Nil)   => 1
+          case (x :: xt, y :: yt) =>
+            val here = summon[Ordering[(A, B)]].compare(x, y)
+            if here != 0 then here else walk(xt, yt)
+
+      walk(Relation.pairs(relation(left)).toList, Relation.pairs(relation(right)).toList)
+
   def relation[A, B](function: Function[A, B]): Relation.Relation[A, B] = function
 
   def tryOfRelation[A: Ordering, B: Ordering](
