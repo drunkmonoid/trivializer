@@ -125,6 +125,24 @@ package trivializer
             chained && identityComposed && beforeF.compose(afterF) == None
           case _ => false
       }
+    ),
+    check(
+      "kinds", {
+        val swap = Relation.empty[Int, Int].add(0, 1).add(1, 0)
+        val collapse = Relation.empty[Int, Int].add(0, 1).add(1, 1)
+        val domain = FiniteSet.empty[Int].insert(0).insert(1)
+        val images = FiniteSet.empty[Int].insert(0).insert(1)
+        val bigger = images.insert(2)
+        (Function.tryOfRelation(swap), Function.tryOfRelation(collapse)) match
+          case (Some(bijection), Some(constant)) =>
+            bijection.isBijective(domain, images)
+              && bijection.isInjective(domain, bigger)
+              && !bijection.isSurjective(domain, bigger)
+              && constant.isSurjective(domain, FiniteSet.singleton(1))
+              && !constant.isInjective(domain, FiniteSet.singleton(1))
+              && !constant.isBijective(domain, images)
+          case _ => false
+      }
     )
   )
 

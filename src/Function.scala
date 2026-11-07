@@ -43,3 +43,30 @@ object Function:
               case None    => acc
           }
         Some(Relation.ofPairs(pairs))
+
+  // Predicates on one function and its stated domain and codomain.
+  extension [A: Ordering, B: Ordering](function: Function[A, B])
+    private def listed: List[(A, B)] = Relation.pairs(relation(function)).toList
+
+    private def totalOn(domain: FiniteSet.Set[A], codomain: FiniteSet.Set[B]): Boolean =
+      val inside = listed.forall { (a, b) =>
+        domain.contains(a) && codomain.contains(b)
+      }
+      inside && domain.toList.forall(a => function(a).isDefined)
+
+    def isInjective(domain: FiniteSet.Set[A], codomain: FiniteSet.Set[B]): Boolean =
+      val images = listed
+      totalOn(domain, codomain) && images.forall { (a, b) =>
+        images.forall { (c, d) =>
+          if summon[Ordering[B]].equiv(b, d) then summon[Ordering[A]].equiv(a, c) else true
+        }
+      }
+
+    def isSurjective(domain: FiniteSet.Set[A], codomain: FiniteSet.Set[B]): Boolean =
+      val images = listed
+      totalOn(domain, codomain) && codomain.toList.forall { b =>
+        images.exists((_, d) => summon[Ordering[B]].equiv(b, d))
+      }
+
+    def isBijective(domain: FiniteSet.Set[A], codomain: FiniteSet.Set[B]): Boolean =
+      isInjective(domain, codomain) && isSurjective(domain, codomain)
