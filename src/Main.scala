@@ -190,6 +190,18 @@ package trivializer
               && Subset.tryWitness(stored, FiniteSet.empty[Int]).isDefined
           case None => false
       }
+    ),
+    check(
+      "combination", {
+        val chosen = FiniteSet.empty[Int].insert(0).insert(2)
+        Combination.tryOf(stored, chosen, 2) match
+          case Some(combination) =>
+            combination.subset.chosen.equal(chosen)
+              && combination.subset.chosen.cardinality == 2
+              && Combination.tryOf(stored, chosen, 1).isEmpty
+              && Combination.tryOf(stored, FiniteSet.singleton(3), 1).isEmpty
+          case None => false
+      }
     )
   )
 
