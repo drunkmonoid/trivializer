@@ -138,6 +138,9 @@ object FiniteSet:
       unionLists(families, grown)
     }
 
+  def kSubsets[A: Ordering](set: Set[A], k: Int): Set[Set[A]] =
+    power(set).filter(_.cardinality == k)
+
   extension [A](set: Set[A])
     def toList: List[A] = set
     def cardinality: Int = set.length
@@ -158,3 +161,5 @@ object FiniteSet:
     def map[B: Ordering](f: A => B): Set[B] = FiniteSet.map(f, set)
     @targetName("powerExt")
     def power: Set[Set[A]] = FiniteSet.power(set)
+    @targetName("kSubsetsExt")
+    def kSubsets(k: Int): Set[Set[A]] = FiniteSet.kSubsets(set, k)

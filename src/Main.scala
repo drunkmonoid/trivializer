@@ -275,6 +275,15 @@ package trivializer
           && subsets.cardinality == subsets.toList.length
           && FiniteSet.empty[Int].power.toList.map(_.toList) == List(Nil)
       }
+    ),
+    check(
+      "k-subsets", {
+        stored.kSubsets(1).toList.map(_.toList) == List(List(0), List(1), List(2))
+          && stored.kSubsets(0).toList.map(_.toList) == List(Nil)
+          && stored.kSubsets(3).toList.map(_.toList) == List(List(0, 1, 2))
+          && stored.kSubsets(4).cardinality == 0
+          && stored.kSubsets(1).cardinality == stored.kSubsets(1).toList.length
+      }
     )
   )
 
