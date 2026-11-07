@@ -143,6 +143,17 @@ package trivializer
               && !constant.isBijective(domain, images)
           case _ => false
       }
+    ),
+    check(
+      "sequence", {
+        val repeated = Sequence.cons(2, Sequence.cons(1, Sequence.cons(2, Sequence.empty)))
+        repeated.toList == List(2, 1, 2)
+          && repeated.length == 3
+          && repeated.item(0) == Some(2)
+          && repeated.item(1) == Some(1)
+          && repeated.item(3) == None
+          && Sequence.empty[Int].length == 0
+      }
     )
   )
 
