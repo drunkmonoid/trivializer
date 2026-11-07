@@ -97,3 +97,12 @@ object Enumeration:
         gather(k + 1, acc.union(tagged))
 
     gather(0, FiniteSet.empty)
+
+  def complement[A: Ordering](
+      ambient: FiniteSet.Set[A],
+      k: Int
+  ): Function.Function[FiniteSet.Set[A], FiniteSet.Set[A]] =
+    val pairs = ambient.kSubsets(k).toList.foldLeft(FiniteSet.empty[(FiniteSet.Set[A], FiniteSet.Set[A])]) {
+      (acc, subset) => acc.insert((subset, ambient.difference(subset)))
+    }
+    Function.tryOfRelation(Relation.ofPairs(pairs)).get

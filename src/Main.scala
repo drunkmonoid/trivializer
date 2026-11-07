@@ -465,6 +465,18 @@ package trivializer
           && Enumeration.count(omitting) == omitting.toList.length
           && Enumeration.count(containing) == containing.toList.length
       }
+    ),
+    check(
+      "complement", {
+        val forward = Enumeration.complement(stored, 1)
+        val backward = Enumeration.complement(stored, stored.cardinality - 1)
+        val one = FiniteSet.singleton(0)
+        val rest = stored.remove(0)
+        forward(one) == Some(rest)
+          && backward(rest) == Some(one)
+          && forward.isBijective(stored.kSubsets(1), stored.kSubsets(stored.cardinality - 1))
+          && Enumeration.count(stored.kSubsets(1)) == Enumeration.count(stored.kSubsets(stored.cardinality - 1))
+      }
     )
   )
 
