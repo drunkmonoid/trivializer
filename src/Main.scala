@@ -578,6 +578,18 @@ package trivializer
           && path.tryWalk(Sequence.cons(0, Sequence.empty)) == Some(Sequence.cons(0, Sequence.empty))
           && path.tryWalk(Sequence.empty).isEmpty
       }
+    ),
+    check(
+      "reachable", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        val alone = Graph.tryOf(stored, FiniteSet.singleton(edge)).get
+        path.reachable(0).get.equal(stored)
+          && alone.reachable(0).get.equal(FiniteSet.empty[Int].insert(0).insert(1))
+          && !alone.reachable(0).get.contains(2)
+          && path.reachable(3).isEmpty
+      }
     )
   )
 

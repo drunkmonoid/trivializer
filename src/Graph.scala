@@ -54,3 +54,15 @@ object Graph:
       if letters.nonEmpty && letters.forall(vertices.contains) && linked(letters.head, letters.tail) then
         Some(steps)
       else None
+
+    def reachable(start: A)(using Ordering[A]): Option[FiniteSet.Set[A]] =
+      if !vertices.contains(start) then None
+      else
+        def walk(frontier: List[A], seen: FiniteSet.Set[A]): FiniteSet.Set[A] =
+          frontier match
+            case Nil => seen
+            case current :: rest =>
+              if seen.contains(current) then walk(rest, seen)
+              else walk(neighbors(current).get.toList ++ rest, seen.insert(current))
+
+        Some(walk(List(start), FiniteSet.empty[A]))
