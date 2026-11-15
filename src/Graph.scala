@@ -107,6 +107,15 @@ object Graph:
       edges.flatMap(built => tryOf(vertices, built))
     }
 
+  def isIsomorphism[A: Ordering](
+      mapping: Function.Function[A, A],
+      source: Graph[A],
+      target: Graph[A]
+  ): Boolean =
+    relabel(source, mapping) match
+      case Some(image) => image.vertices.equal(target.vertices) && image.edges.equal(target.edges)
+      case None        => false
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])

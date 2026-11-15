@@ -653,6 +653,21 @@ package trivializer
         val back = moved.flatMap(graph => Graph.relabel(graph, inverse))
         moved.isDefined && back.get.vertices.equal(path.vertices) && back.get.edges.equal(path.edges)
       }
+    ),
+    check(
+      "isomorphism", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val closing = FiniteSet.empty[Int].insert(0).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        val triangle = Graph.tryOf(stored, path.edges.insert(closing)).get
+        val reversal = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 2)).insert((1, 1)).insert((2, 0))
+          )
+        ).get
+        Graph.isIsomorphism(reversal, path, path) && !Graph.isIsomorphism(reversal, path, triangle)
+      }
     )
   )
 
