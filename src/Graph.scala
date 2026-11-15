@@ -161,6 +161,13 @@ object Graph:
     val rightCanonical = canonical(right)
     leftCanonical.vertices.equal(rightCanonical.vertices) && leftCanonical.edges.equal(rightCanonical.edges)
 
+  def allGraphs[A: Ordering](vertices: FiniteSet.Set[A]): FiniteSet.Set[Graph[A]] =
+    vertices.kSubsets(2).power.toList.foldLeft(FiniteSet.empty[Graph[A]]) { (acc, edges) =>
+      tryOf(vertices, edges) match
+        case Some(graph) => acc.insert(graph)
+        case None        => acc
+    }
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])

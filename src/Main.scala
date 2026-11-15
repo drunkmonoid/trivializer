@@ -809,6 +809,26 @@ package trivializer
           && !Graph.sameUnlabeled(path, star)
           && Graph.isomorphisms(path, star).toList.isEmpty
       }
+    ),
+    check(
+      "all-graphs", {
+        val graphs = Graph.allGraphs(stored)
+        val edgeSets = graphs.toList.foldLeft(FiniteSet.empty[FiniteSet.Set[FiniteSet.Set[Int]]]) { (acc, graph) =>
+          acc.insert(graph.edges)
+        }
+        val potential = stored.kSubsets(2).power
+        val path = Graph.tryOf(
+          stored,
+          FiniteSet.empty[FiniteSet.Set[Int]].insert(FiniteSet.empty[Int].insert(0).insert(1)).insert(
+            FiniteSet.empty[Int].insert(1).insert(2)
+          )
+        ).get
+        edgeSets.equal(potential)
+          && graphs.contains(Graph.tryOf(stored, FiniteSet.empty).get)
+          && graphs.contains(path)
+          && Enumeration.count(graphs) == Enumeration.count(potential)
+          && Enumeration.count(graphs) == graphs.toList.length
+      }
     )
   )
 
