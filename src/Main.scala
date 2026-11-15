@@ -829,6 +829,19 @@ package trivializer
           && Enumeration.count(graphs) == Enumeration.count(potential)
           && Enumeration.count(graphs) == graphs.toList.length
       }
+    ),
+    check(
+      "edge-graph", {
+        val forward = Graph.edgeGraph(stored)
+        val emptyEdges = FiniteSet.empty[FiniteSet.Set[Int]]
+        val pathEdges = FiniteSet
+          .empty[FiniteSet.Set[Int]]
+          .insert(FiniteSet.empty[Int].insert(0).insert(1))
+          .insert(FiniteSet.empty[Int].insert(1).insert(2))
+        forward(emptyEdges).get.edges.equal(emptyEdges)
+          && forward(pathEdges).get.edges.equal(pathEdges)
+          && forward.isBijective(stored.kSubsets(2).power, Graph.allGraphs(stored))
+      }
     )
   )
 

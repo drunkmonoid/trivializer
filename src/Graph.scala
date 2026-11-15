@@ -168,6 +168,16 @@ object Graph:
         case None        => acc
     }
 
+  def edgeGraph[A: Ordering](
+      vertices: FiniteSet.Set[A]
+  ): Function.Function[FiniteSet.Set[FiniteSet.Set[A]], Graph[A]] =
+    val pairs = vertices.kSubsets(2).power.toList.foldLeft(
+      FiniteSet.empty[(FiniteSet.Set[FiniteSet.Set[A]], Graph[A])]
+    ) { (acc, edges) =>
+      acc.insert((edges, tryOf(vertices, edges).get))
+    }
+    Function.tryOfRelation(Relation.ofPairs(pairs)).get
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])
