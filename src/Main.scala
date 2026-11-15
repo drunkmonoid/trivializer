@@ -721,6 +721,16 @@ package trivializer
           && autos.contains(reversal)
           && Graph.automorphisms(triangle).equal(Enumeration.bijections(stored, stored))
       }
+    ),
+    check(
+      "vertex-orbit", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        Graph.vertexOrbit(path, 1).get.equal(FiniteSet.singleton(1))
+          && Graph.vertexOrbit(path, 0).get.equal(FiniteSet.empty[Int].insert(0).insert(2))
+          && Graph.vertexOrbit(path, 3).isEmpty
+      }
     )
   )
 

@@ -127,6 +127,13 @@ object Graph:
   def automorphisms[A: Ordering](graph: Graph[A]): FiniteSet.Set[Function.Function[A, A]] =
     isomorphisms(graph, graph)
 
+  def vertexOrbit[A: Ordering](graph: Graph[A], vertex: A): Option[FiniteSet.Set[A]] =
+    if !graph.vertices.contains(vertex) then None
+    else
+      Some(automorphisms(graph).toList.foldLeft(FiniteSet.empty[A]) { (acc, mapping) =>
+        acc.insert(mapping(vertex).get)
+      })
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])
