@@ -767,6 +767,22 @@ package trivializer
           && Graph.canonical(triangle).edges.equal(triangle.edges)
           && oneEdges.forall(graph => Graph.canonical(graph).edges.equal(least.edges))
       }
+    ),
+    check(
+      "canonical-stable", {
+        val edge = FiniteSet.empty[Int].insert(1).insert(2)
+        val graph = Graph.tryOf(stored, FiniteSet.singleton(edge)).get
+        val move = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((1, 0)).insert((2, 1)).insert((0, 2))
+          )
+        ).get
+        val image = Graph.relabel(graph, move).get
+        val canonical = Graph.canonical(graph)
+        !graph.edges.equal(canonical.edges)
+          && Graph.canonical(image).edges.equal(canonical.edges)
+          && Graph.canonical(canonical).edges.equal(canonical.edges)
+      }
     )
   )
 
