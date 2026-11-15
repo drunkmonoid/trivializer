@@ -1092,6 +1092,21 @@ package trivializer
           && Graph.canonical(Graph.complement(one)).edges.equal(path.edges)
           && Graph.canonical(Graph.complement(path)).edges.equal(one.edges)
       }
+    ),
+    check(
+      "complement-pair", {
+        val five = stored.insert(3).insert(4)
+        def edge(left: Int, right: Int): FiniteSet.Set[Int] =
+          FiniteSet.empty[Int].insert(left).insert(right)
+        def graph(edges: FiniteSet.Set[Int]*): Graph.Graph[Int] =
+          Graph.tryOf(five, edges.foldLeft(FiniteSet.empty[FiniteSet.Set[Int]])(_.insert(_))).get
+        val path = Graph.complement(graph(edge(0, 1), edge(1, 2), edge(2, 3), edge(3, 4)))
+        val split = Graph.complement(graph(edge(0, 1), edge(1, 2), edge(2, 0), edge(3, 4)))
+        path.isConnected
+          && split.isConnected
+          && Graph.sortedDegreeSequence(path) == Graph.sortedDegreeSequence(split)
+          && !Graph.sameUnlabeled(path, split)
+      }
     )
   )
 
