@@ -1021,6 +1021,22 @@ package trivializer
           }
         }
       }
+    ),
+    check(
+      "degree-pair", {
+        val five = stored.insert(3).insert(4)
+        def edge(left: Int, right: Int): FiniteSet.Set[Int] =
+          FiniteSet.empty[Int].insert(left).insert(right)
+        def graph(edges: FiniteSet.Set[Int]*): Graph.Graph[Int] =
+          Graph.tryOf(five, edges.foldLeft(FiniteSet.empty[FiniteSet.Set[Int]])(_.insert(_))).get
+        val path = graph(edge(0, 1), edge(1, 2), edge(2, 3), edge(3, 4))
+        val split = graph(edge(0, 1), edge(1, 2), edge(2, 0), edge(3, 4))
+        val family = Graph.isomorphisms(path, split)
+        Graph.sortedDegreeSequence(path) == Graph.sortedDegreeSequence(split)
+          && !Graph.sameUnlabeled(path, split)
+          && family.toList.isEmpty
+          && Enumeration.count(family) == family.toList.length
+      }
     )
   )
 
