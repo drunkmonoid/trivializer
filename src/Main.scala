@@ -1107,6 +1107,26 @@ package trivializer
           && Graph.sortedDegreeSequence(path) == Graph.sortedDegreeSequence(split)
           && !Graph.sameUnlabeled(path, split)
       }
+    ),
+    check(
+      "onto-canonical", {
+        val graph = Graph.tryOf(stored, FiniteSet.singleton(FiniteSet.empty[Int].insert(1).insert(2))).get
+        val autos = Graph.automorphisms(graph)
+        val onto = Graph.ontoCanonical(graph)
+        val target = Graph.isomorphisms(graph, Graph.canonical(graph))
+        val chosen = onto(Function.identity(stored)).get
+        val back = Function.tryOfRelation(
+          Relation.ofPairs(
+            Relation.pairs(Function.relation(chosen)).toList.foldLeft(FiniteSet.empty[(Int, Int)]) { (acc, pair) =>
+              acc.insert((pair._2, pair._1))
+            }
+          )
+        ).get
+        onto.isBijective(autos, target)
+          && autos.toList.forall { automorphism =>
+            back.compose(onto(automorphism).get).contains(automorphism)
+          }
+      }
     )
   )
 

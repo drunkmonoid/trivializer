@@ -210,6 +210,17 @@ object Graph:
   def complement[A: Ordering](graph: Graph[A]): Graph[A] =
     tryOf(graph.vertices, graph.vertices.kSubsets(2).difference(graph.edges)).get
 
+  def ontoCanonical[A: Ordering](
+      graph: Graph[A]
+  ): Function.Function[Function.Function[A, A], Function.Function[A, A]] =
+    val chosen = isomorphisms(graph, canonical(graph)).toList.min
+    val pairs = automorphisms(graph).toList.foldLeft(
+      FiniteSet.empty[(Function.Function[A, A], Function.Function[A, A])]
+    ) { (acc, automorphism) =>
+      acc.insert((automorphism, chosen.compose(automorphism).get))
+    }
+    Function.tryOfRelation(Relation.ofPairs(pairs)).get
+
   private def inverseMap[A: Ordering](mapping: Function.Function[A, A]): Function.Function[A, A] =
     val pairs = Relation.pairs(Function.relation(mapping)).toList.foldLeft(FiniteSet.empty[(A, A)]) { (acc, pair) =>
       acc.insert((pair._2, pair._1))
