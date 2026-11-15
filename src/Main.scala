@@ -742,6 +742,18 @@ package trivializer
           && Graph.edgeOrbit(alone, edge).get.equal(FiniteSet.singleton(edge))
           && Graph.edgeOrbit(path, FiniteSet.empty[Int].insert(0).insert(2)).isEmpty
       }
+    ),
+    check(
+      "relabelings", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val alone = Graph.tryOf(stored, FiniteSet.singleton(edge)).get
+        val family = Graph.relabelings(alone)
+        val edgeSets = family.toList.foldLeft(FiniteSet.empty[FiniteSet.Set[FiniteSet.Set[Int]]]) { (acc, graph) =>
+          acc.insert(graph.edges)
+        }
+        val expected = stored.kSubsets(2).map(edge => FiniteSet.singleton(edge))
+        edgeSets.equal(expected) && Enumeration.count(family) == family.toList.length
+      }
     )
   )
 

@@ -145,6 +145,14 @@ object Graph:
         acc.insert(image)
       })
 
+  def relabelings[A: Ordering](graph: Graph[A]): FiniteSet.Set[Graph[A]] =
+    Enumeration.bijections(graph.vertices, graph.vertices).toList.foldLeft(FiniteSet.empty[Graph[A]]) {
+      (acc, mapping) =>
+        relabel(graph, mapping) match
+          case Some(image) => acc.insert(image)
+          case None        => acc
+    }
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])
