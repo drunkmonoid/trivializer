@@ -903,6 +903,25 @@ package trivializer
           && connected.toList.forall(_.isConnected)
           && Enumeration.count(connected) == connected.toList.length
       }
+    ),
+    check(
+      "four-graphs", {
+        val four = stored.insert(3)
+        def edge(left: Int, right: Int): FiniteSet.Set[Int] =
+          FiniteSet.empty[Int].insert(left).insert(right)
+        def graph(edges: FiniteSet.Set[Int]*): Graph.Graph[Int] =
+          Graph.tryOf(four, edges.foldLeft(FiniteSet.empty[FiniteSet.Set[Int]])(_.insert(_))).get
+        val path = graph(edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graph(edge(0, 1), edge(0, 2), edge(0, 3))
+        val graphs = Graph.allGraphs(four)
+        val potential = four.kSubsets(2).power
+        val forward = Graph.edgeGraph(four)
+        Enumeration.count(graphs) == Enumeration.count(potential)
+          && Enumeration.count(graphs) == graphs.toList.length
+          && forward.isBijective(potential, graphs)
+          && forward(path.edges).get.edges.equal(path.edges)
+          && forward(star.edges).get.edges.equal(star.edges)
+      }
     )
   )
 
