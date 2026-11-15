@@ -1065,6 +1065,33 @@ package trivializer
         val carried = Graph.relabel(Graph.complement(graph), move).get
         Graph.complement(Graph.relabel(graph, move).get).edges.equal(carried.edges)
       }
+    ),
+    check(
+      "complement-census", {
+        val census = Graph.census(stored)
+        val images = census.toList.foldLeft(FiniteSet.empty[Graph.Graph[Int]]) { (acc, graph) =>
+          acc.insert(Graph.canonical(Graph.complement(graph)))
+        }
+        val empty = Graph.canonical(Graph.tryOf(stored, FiniteSet.empty).get)
+        val one = Graph.canonical(
+          Graph.tryOf(stored, FiniteSet.singleton(FiniteSet.empty[Int].insert(0).insert(1))).get
+        )
+        val path = Graph.canonical(
+          Graph.tryOf(
+            stored,
+            FiniteSet
+              .empty[FiniteSet.Set[Int]]
+              .insert(FiniteSet.empty[Int].insert(0).insert(1))
+              .insert(FiniteSet.empty[Int].insert(1).insert(2))
+          ).get
+        )
+        val triangle = Graph.canonical(Graph.tryOf(stored, stored.kSubsets(2)).get)
+        images.equal(census)
+          && Graph.canonical(Graph.complement(empty)).edges.equal(triangle.edges)
+          && Graph.canonical(Graph.complement(triangle)).edges.equal(empty.edges)
+          && Graph.canonical(Graph.complement(one)).edges.equal(path.edges)
+          && Graph.canonical(Graph.complement(path)).edges.equal(one.edges)
+      }
     )
   )
 
