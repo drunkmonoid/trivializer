@@ -668,6 +668,28 @@ package trivializer
         ).get
         Graph.isIsomorphism(reversal, path, path) && !Graph.isIsomorphism(reversal, path, triangle)
       }
+    ),
+    check(
+      "isomorphisms", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        val reversal = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 2)).insert((1, 1)).insert((2, 0))
+          )
+        ).get
+        val swap = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 1)).insert((1, 0)).insert((2, 2))
+          )
+        ).get
+        val family = Graph.isomorphisms(path, path)
+        family.contains(Function.identity(stored))
+          && family.contains(reversal)
+          && !family.contains(swap)
+          && Enumeration.count(family) == family.toList.length
+      }
     )
   )
 

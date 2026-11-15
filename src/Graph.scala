@@ -116,6 +116,14 @@ object Graph:
       case Some(image) => image.vertices.equal(target.vertices) && image.edges.equal(target.edges)
       case None        => false
 
+  def isomorphisms[A: Ordering](
+      source: Graph[A],
+      target: Graph[A]
+  ): FiniteSet.Set[Function.Function[A, A]] =
+    Enumeration.bijections(source.vertices, target.vertices).filter { mapping =>
+      isIsomorphism(mapping, source, target)
+    }
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])
