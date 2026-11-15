@@ -81,6 +81,32 @@ object Graph:
     def isTree(using Ordering[A]): Boolean =
       isConnected && Enumeration.count(edges) + 1 == Enumeration.count(vertices)
 
+  def relabel[A: Ordering](
+      graph: Graph[A],
+      mapping: Function.Function[A, A]
+  ): Option[Graph[A]] =
+    def imageOf(set: FiniteSet.Set[A]): Option[FiniteSet.Set[A]] =
+      set.toList.foldLeft(Option(FiniteSet.empty[A])) { (acc, vertex) =>
+        acc match
+          case None => None
+          case Some(images) =>
+            mapping(vertex) match
+              case Some(image) => Some(images.insert(image))
+              case None        => None
+      }
+
+    imageOf(graph.vertices).flatMap { vertices =>
+      val edges = graph.edges.toList.foldLeft(Option(FiniteSet.empty[FiniteSet.Set[A]])) { (acc, edge) =>
+        acc match
+          case None => None
+          case Some(built) =>
+            imageOf(edge) match
+              case Some(image) => Some(built.insert(image))
+              case None        => None
+      }
+      edges.flatMap(built => tryOf(vertices, built))
+    }
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])

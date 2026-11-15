@@ -631,6 +631,28 @@ package trivializer
           && Graph.pruferEncode(one) == Some(Sequence.empty)
           && Graph.pruferEncode(Graph.tryOf(stored, path.edges.insert(FiniteSet.empty[Int].insert(0).insert(2))).get).isEmpty
       }
+    ),
+    check(
+      "relabel", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        val reversal = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 2)).insert((1, 1)).insert((2, 0))
+          )
+        ).get
+        val inverse = Function.tryOfRelation(
+          Relation.ofPairs(
+            Relation.pairs(Function.relation(reversal)).toList.foldLeft(FiniteSet.empty[(Int, Int)]) {
+              (acc, pair) => acc.insert((pair._2, pair._1))
+            }
+          )
+        ).get
+        val moved = Graph.relabel(path, reversal)
+        val back = moved.flatMap(graph => Graph.relabel(graph, inverse))
+        moved.isDefined && back.get.vertices.equal(path.vertices) && back.get.edges.equal(path.edges)
+      }
     )
   )
 
