@@ -922,6 +922,30 @@ package trivializer
           && forward(path.edges).get.edges.equal(path.edges)
           && forward(star.edges).get.edges.equal(star.edges)
       }
+    ),
+    check(
+      "four-classes", {
+        val four = stored.insert(3)
+        def edge(left: Int, right: Int): FiniteSet.Set[Int] =
+          FiniteSet.empty[Int].insert(left).insert(right)
+        def graph(edges: FiniteSet.Set[Int]*): Graph.Graph[Int] =
+          Graph.tryOf(four, edges.foldLeft(FiniteSet.empty[FiniteSet.Set[Int]])(_.insert(_))).get
+        val path = graph(edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graph(edge(0, 1), edge(0, 2), edge(0, 3))
+        val cycle = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 1)).insert((1, 2)).insert((2, 3)).insert((3, 0))
+          )
+        ).get
+        val moved = Graph.relabel(path, cycle).get
+        val census = Graph.census(four)
+        val pathCanonical = Graph.canonical(path)
+        val starCanonical = Graph.canonical(star)
+        census.contains(pathCanonical)
+          && census.contains(starCanonical)
+          && !pathCanonical.edges.equal(starCanonical.edges)
+          && Graph.canonical(moved).edges.equal(pathCanonical.edges)
+      }
     )
   )
 
