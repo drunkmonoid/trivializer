@@ -1008,6 +1008,19 @@ package trivializer
             Enumeration.count(flags.filter((_, incident) => incident.equal(edge))) == edge.cardinality
           }
       }
+    ),
+    check(
+      "degree-census", {
+        val four = stored.insert(3)
+        val recorded = Graph.allGraphs(four).toList.map { graph =>
+          (Graph.canonical(graph), Graph.sortedDegreeSequence(graph))
+        }
+        recorded.forall { (leftCanonical, leftDegrees) =>
+          recorded.forall { (rightCanonical, rightDegrees) =>
+            (leftDegrees == rightDegrees) == leftCanonical.edges.equal(rightCanonical.edges)
+          }
+        }
+      }
     )
   )
 
