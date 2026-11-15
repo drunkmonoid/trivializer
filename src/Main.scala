@@ -703,6 +703,24 @@ package trivializer
         val family = Graph.isomorphisms(path, star)
         path.isTree && star.isTree && family.toList.isEmpty && Enumeration.count(family) == family.toList.length
       }
+    ),
+    check(
+      "automorphisms", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val closing = FiniteSet.empty[Int].insert(0).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        val triangle = Graph.tryOf(stored, path.edges.insert(closing)).get
+        val reversal = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 2)).insert((1, 1)).insert((2, 0))
+          )
+        ).get
+        val autos = Graph.automorphisms(path)
+        autos.contains(Function.identity(stored))
+          && autos.contains(reversal)
+          && Graph.automorphisms(triangle).equal(Enumeration.bijections(stored, stored))
+      }
     )
   )
 

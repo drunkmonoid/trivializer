@@ -124,6 +124,9 @@ object Graph:
       isIsomorphism(mapping, source, target)
     }
 
+  def automorphisms[A: Ordering](graph: Graph[A]): FiniteSet.Set[Function.Function[A, A]] =
+    isomorphisms(graph, graph)
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])
