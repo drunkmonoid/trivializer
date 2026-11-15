@@ -24,6 +24,16 @@ Read these next:
 2. `Enumeration` stores the permutations, the set-partitions, and the functions from one set to another. Injections, surjections, and bijections are the functions that pass the predicate already stored on `Function`. `count` reads the cardinality of a family. `subsetsBySize` tags each subset by that size and covers the power set. `complement` sends a k-subset to its complement. `subsetToWord` and `wordToSubset` match a subset with the binary word of its membership. `permutationToMap` and `mapToPermutation` match a permutation with the bijection it stores. `pascalSplit` sends each k-subset to one side of the tagged union. `splitWord` and `joinWord` match a word with its last letter and its prefix.
 3. `Graph` stores vertices and edges that are 2-subsets of those vertices. `neighbors` is the other ends of the edges at one vertex. `degree` counts those edges. `tryWalk` accepts a sequence whose consecutive pairs are stored edges. `reachable` walks neighbors from one vertex. `isConnected` asks whether that walk meets every vertex. `isTree` asks whether the graph is connected and the edge count is one less than the vertex count. `pruferEncode` and `pruferDecode` turn one tree into a word and back. `labeledTrees` stores every decoding of a word of length `|V| - 2` over the vertex set.
 
+An unlabeled graph is a labeled graph standing for every relabeling of itself. The representative is the least relabeling. The census stores one representative per class. A count is still the cardinality of a stored family.
+
+Read these next:
+
+1. `relabel` carries each edge along a bijection of the vertices. `isIsomorphism` accepts that bijection when the carried edges match the target. `isomorphisms` stores every such bijection, and `automorphisms` keeps the ones from a graph to itself. `vertexOrbit` and `edgeOrbit` are the images of one vertex and one edge under those automorphisms.
+2. `relabelings` stores every graph reached that way. `canonical` keeps the least of them. `sameUnlabeled` asks whether two graphs have the same canonical graph.
+3. `allGraphs` stores every edge set drawn from the 2-subsets of a vertex set. `edgeGraph` matches each of those subsets with its graph. `census` keeps one canonical graph per class. `orbitSection` and `orbitSplit` split a vertex bijection into a relabeling and a leftover automorphism. `connectedCensus` and `treeCensus` keep the connected graphs and the trees. `canonicalTrees` is the same tree set read off the labeled trees.
+4. `degreeSequence` lists the stored degrees in vertex order. `sortedDegreeSequence` is that sequence sorted. `flags` stores a vertex with each edge that contains it. On four vertices the sorted degree sequence and the canonical graph split the stored graphs the same way. On five vertices a path and a triangle disjoint from an edge share a degree sequence and differ as canonical graphs.
+5. `complement` stores the potential edges that were missing. It commutes with relabeling and permutes the three-vertex census. The complements of that five-vertex pair stay connected and stay apart. `ontoCanonical` matches the automorphisms with the isomorphisms onto the canonical graph.
+
 ## Run
 
 This project targets Scala 3.9. Install [Scala CLI](https://scala-cli.virtuslab.org/), then from this directory:
@@ -36,7 +46,7 @@ Exit code 0 means every invariant above holds. Exit code 1 means one of them doe
 
 ## Next
 
-Unlabeled graphs. Isomorphism, and one canonical representative of a graph. A census of graphs up to isomorphism is that chunk.
+Induced subgraphs. A set of vertices determines the edges that lie inside it. A component is that subgraph on the vertices reachable from one vertex.
 
 ## License
 
