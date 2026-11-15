@@ -946,6 +946,24 @@ package trivializer
           && !pathCanonical.edges.equal(starCanonical.edges)
           && Graph.canonical(moved).edges.equal(pathCanonical.edges)
       }
+    ),
+    check(
+      "tree-census", {
+        val four = stored.insert(3)
+        def edge(left: Int, right: Int): FiniteSet.Set[Int] =
+          FiniteSet.empty[Int].insert(left).insert(right)
+        def graph(edges: FiniteSet.Set[Int]*): Graph.Graph[Int] =
+          Graph.tryOf(four, edges.foldLeft(FiniteSet.empty[FiniteSet.Set[Int]])(_.insert(_))).get
+        val path = Graph.canonical(graph(edge(0, 1), edge(1, 2), edge(2, 3)))
+        val star = Graph.canonical(graph(edge(0, 1), edge(0, 2), edge(0, 3)))
+        val trees = Graph.treeCensus(four)
+        val forms = Graph.canonicalTrees(four)
+        trees.equal(forms)
+          && trees.contains(path)
+          && trees.contains(star)
+          && !path.edges.equal(star.edges)
+          && Enumeration.count(trees) == trees.toList.length
+      }
     )
   )
 

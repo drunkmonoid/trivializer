@@ -186,6 +186,14 @@ object Graph:
   def connectedCensus[A: Ordering](vertices: FiniteSet.Set[A]): FiniteSet.Set[Graph[A]] =
     census(vertices).filter(_.isConnected)
 
+  def treeCensus[A: Ordering](vertices: FiniteSet.Set[A]): FiniteSet.Set[Graph[A]] =
+    census(vertices).filter(_.isTree)
+
+  def canonicalTrees[A: Ordering](vertices: FiniteSet.Set[A]): FiniteSet.Set[Graph[A]] =
+    labeledTrees(vertices).toList.foldLeft(FiniteSet.empty[Graph[A]]) { (acc, tree) =>
+      acc.insert(canonical(tree))
+    }
+
   private def inverseMap[A: Ordering](mapping: Function.Function[A, A]): Function.Function[A, A] =
     val pairs = Relation.pairs(Function.relation(mapping)).toList.foldLeft(FiniteSet.empty[(A, A)]) { (acc, pair) =>
       acc.insert((pair._2, pair._1))
