@@ -178,6 +178,11 @@ object Graph:
     }
     Function.tryOfRelation(Relation.ofPairs(pairs)).get
 
+  def census[A: Ordering](vertices: FiniteSet.Set[A]): FiniteSet.Set[Graph[A]] =
+    allGraphs(vertices).toList.foldLeft(FiniteSet.empty[Graph[A]]) { (acc, graph) =>
+      acc.insert(canonical(graph))
+    }
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])

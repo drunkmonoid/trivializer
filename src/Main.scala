@@ -842,6 +842,27 @@ package trivializer
           && forward(pathEdges).get.edges.equal(pathEdges)
           && forward.isBijective(stored.kSubsets(2).power, Graph.allGraphs(stored))
       }
+    ),
+    check(
+      "census", {
+        val empty = Graph.tryOf(stored, FiniteSet.empty).get
+        val one = Graph.tryOf(stored, FiniteSet.singleton(FiniteSet.empty[Int].insert(0).insert(1))).get
+        val path = Graph.tryOf(
+          stored,
+          FiniteSet
+            .empty[FiniteSet.Set[Int]]
+            .insert(FiniteSet.empty[Int].insert(0).insert(1))
+            .insert(FiniteSet.empty[Int].insert(1).insert(2))
+        ).get
+        val triangle = Graph.tryOf(stored, stored.kSubsets(2)).get
+        val listed = List(empty, one, path, triangle).foldLeft(FiniteSet.empty[Graph.Graph[Int]]) { (acc, graph) =>
+          acc.insert(Graph.canonical(graph))
+        }
+        val census = Graph.census(stored)
+        census.equal(listed)
+          && Graph.allGraphs(stored).toList.forall(graph => census.contains(Graph.canonical(graph)))
+          && Enumeration.count(census) == census.toList.length
+      }
     )
   )
 
