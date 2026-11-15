@@ -863,6 +863,21 @@ package trivializer
           && Graph.allGraphs(stored).toList.forall(graph => census.contains(Graph.canonical(graph)))
           && Enumeration.count(census) == census.toList.length
       }
+    ),
+    check(
+      "orbit-split", {
+        val graph = Graph.tryOf(stored, FiniteSet.singleton(FiniteSet.empty[Int].insert(1).insert(2))).get
+        val orbit = Graph.relabelings(graph)
+        val section = Graph.orbitSection(graph)
+        val split = Graph.orbitSplit(graph)
+        orbit.toList.forall { image =>
+          section(image).exists(mapping => Graph.isIsomorphism(mapping, graph, image))
+        }
+          && split.isBijective(
+            Enumeration.bijections(stored, stored),
+            FiniteSet.product(orbit, Graph.automorphisms(graph))
+          )
+      }
     )
   )
 

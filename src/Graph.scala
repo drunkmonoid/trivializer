@@ -183,6 +183,34 @@ object Graph:
       acc.insert(canonical(graph))
     }
 
+  private def inverseMap[A: Ordering](mapping: Function.Function[A, A]): Function.Function[A, A] =
+    val pairs = Relation.pairs(Function.relation(mapping)).toList.foldLeft(FiniteSet.empty[(A, A)]) { (acc, pair) =>
+      acc.insert((pair._2, pair._1))
+    }
+    Function.tryOfRelation(Relation.ofPairs(pairs)).get
+
+  def orbitSection[A: Ordering](
+      graph: Graph[A]
+  ): Function.Function[Graph[A], Function.Function[A, A]] =
+    val pairs = relabelings(graph).toList.foldLeft(FiniteSet.empty[(Graph[A], Function.Function[A, A])]) {
+      (acc, image) => acc.insert((image, isomorphisms(graph, image).toList.min))
+    }
+    Function.tryOfRelation(Relation.ofPairs(pairs)).get
+
+  def orbitSplit[A: Ordering](
+      graph: Graph[A]
+  ): Function.Function[Function.Function[A, A], (Graph[A], Function.Function[A, A])] =
+    val section = orbitSection(graph)
+    val pairs = Enumeration.bijections(graph.vertices, graph.vertices).toList.foldLeft(
+      FiniteSet.empty[(Function.Function[A, A], (Graph[A], Function.Function[A, A]))]
+    ) { (acc, mapping) =>
+      val image = relabel(graph, mapping).get
+      val toward = section(image).get
+      val leftover = inverseMap(toward).compose(mapping).get
+      acc.insert((mapping, (image, leftover)))
+    }
+    Function.tryOfRelation(Relation.ofPairs(pairs)).get
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])
