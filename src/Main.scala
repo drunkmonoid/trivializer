@@ -1053,6 +1053,18 @@ package trivializer
           && Graph.complement(triangle).edges.equal(empty.edges)
           && Graph.complement(Graph.complement(path)).edges.equal(path.edges)
       }
+    ),
+    check(
+      "complement-relabel", {
+        val graph = Graph.tryOf(stored, FiniteSet.singleton(FiniteSet.empty[Int].insert(1).insert(2))).get
+        val move = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((1, 0)).insert((2, 1)).insert((0, 2))
+          )
+        ).get
+        val carried = Graph.relabel(Graph.complement(graph), move).get
+        Graph.complement(Graph.relabel(graph, move).get).edges.equal(carried.edges)
+      }
     )
   )
 
