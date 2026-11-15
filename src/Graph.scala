@@ -183,6 +183,9 @@ object Graph:
       acc.insert(canonical(graph))
     }
 
+  def connectedCensus[A: Ordering](vertices: FiniteSet.Set[A]): FiniteSet.Set[Graph[A]] =
+    census(vertices).filter(_.isConnected)
+
   private def inverseMap[A: Ordering](mapping: Function.Function[A, A]): Function.Function[A, A] =
     val pairs = Relation.pairs(Function.relation(mapping)).toList.foldLeft(FiniteSet.empty[(A, A)]) { (acc, pair) =>
       acc.insert((pair._2, pair._1))

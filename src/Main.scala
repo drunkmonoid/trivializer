@@ -878,6 +878,31 @@ package trivializer
             FiniteSet.product(orbit, Graph.automorphisms(graph))
           )
       }
+    ),
+    check(
+      "connected-census", {
+        val empty = Graph.canonical(Graph.tryOf(stored, FiniteSet.empty).get)
+        val one = Graph.canonical(
+          Graph.tryOf(stored, FiniteSet.singleton(FiniteSet.empty[Int].insert(0).insert(1))).get
+        )
+        val path = Graph.canonical(
+          Graph.tryOf(
+            stored,
+            FiniteSet
+              .empty[FiniteSet.Set[Int]]
+              .insert(FiniteSet.empty[Int].insert(0).insert(1))
+              .insert(FiniteSet.empty[Int].insert(1).insert(2))
+          ).get
+        )
+        val triangle = Graph.canonical(Graph.tryOf(stored, stored.kSubsets(2)).get)
+        val connected = Graph.connectedCensus(stored)
+        val listed = FiniteSet.empty[Graph.Graph[Int]].insert(path).insert(triangle)
+        connected.equal(listed)
+          && !connected.contains(empty)
+          && !connected.contains(one)
+          && connected.toList.forall(_.isConnected)
+          && Enumeration.count(connected) == connected.toList.length
+      }
     )
   )
 
