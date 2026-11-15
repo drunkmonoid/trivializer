@@ -156,6 +156,11 @@ object Graph:
   def canonical[A: Ordering](graph: Graph[A]): Graph[A] =
     relabelings(graph).toList.min
 
+  def sameUnlabeled[A: Ordering](left: Graph[A], right: Graph[A]): Boolean =
+    val leftCanonical = canonical(left)
+    val rightCanonical = canonical(right)
+    leftCanonical.vertices.equal(rightCanonical.vertices) && leftCanonical.edges.equal(rightCanonical.edges)
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])
