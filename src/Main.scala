@@ -964,6 +964,22 @@ package trivializer
           && !path.edges.equal(star.edges)
           && Enumeration.count(trees) == trees.toList.length
       }
+    ),
+    check(
+      "degree-sequence", {
+        val four = stored.insert(3)
+        def edge(left: Int, right: Int): FiniteSet.Set[Int] =
+          FiniteSet.empty[Int].insert(left).insert(right)
+        def graph(edges: FiniteSet.Set[Int]*): Graph.Graph[Int] =
+          Graph.tryOf(four, edges.foldLeft(FiniteSet.empty[FiniteSet.Set[Int]])(_.insert(_))).get
+        val path = graph(edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graph(edge(0, 1), edge(0, 2), edge(0, 3))
+        val pathDegrees = Graph.degreeSequence(path)
+        val starDegrees = Graph.degreeSequence(star)
+        pathDegrees.toList == path.vertices.toList.map(vertex => path.degree(vertex).get)
+          && starDegrees.toList == star.vertices.toList.map(vertex => star.degree(vertex).get)
+          && pathDegrees != starDegrees
+      }
     )
   )
 
