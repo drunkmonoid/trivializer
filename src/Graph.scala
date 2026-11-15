@@ -134,6 +134,17 @@ object Graph:
         acc.insert(mapping(vertex).get)
       })
 
+  def edgeOrbit[A: Ordering](
+      graph: Graph[A],
+      edge: FiniteSet.Set[A]
+  ): Option[FiniteSet.Set[FiniteSet.Set[A]]] =
+    if !graph.edges.contains(edge) then None
+    else
+      Some(automorphisms(graph).toList.foldLeft(FiniteSet.empty[FiniteSet.Set[A]]) { (acc, mapping) =>
+        val image = edge.toList.foldLeft(FiniteSet.empty[A])((set, vertex) => set.insert(mapping(vertex).get))
+        acc.insert(image)
+      })
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])

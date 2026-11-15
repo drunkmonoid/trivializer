@@ -731,6 +731,17 @@ package trivializer
           && Graph.vertexOrbit(path, 0).get.equal(FiniteSet.empty[Int].insert(0).insert(2))
           && Graph.vertexOrbit(path, 3).isEmpty
       }
+    ),
+    check(
+      "edge-orbit", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        val alone = Graph.tryOf(stored, FiniteSet.singleton(edge)).get
+        Graph.edgeOrbit(path, edge).get.equal(path.edges)
+          && Graph.edgeOrbit(alone, edge).get.equal(FiniteSet.singleton(edge))
+          && Graph.edgeOrbit(path, FiniteSet.empty[Int].insert(0).insert(2)).isEmpty
+      }
     )
   )
 
