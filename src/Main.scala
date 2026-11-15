@@ -1037,6 +1037,22 @@ package trivializer
           && family.toList.isEmpty
           && Enumeration.count(family) == family.toList.length
       }
+    ),
+    check(
+      "graph-complement", {
+        val empty = Graph.tryOf(stored, FiniteSet.empty).get
+        val triangle = Graph.tryOf(stored, stored.kSubsets(2)).get
+        val path = Graph.tryOf(
+          stored,
+          FiniteSet
+            .empty[FiniteSet.Set[Int]]
+            .insert(FiniteSet.empty[Int].insert(0).insert(1))
+            .insert(FiniteSet.empty[Int].insert(1).insert(2))
+        ).get
+        Graph.complement(empty).edges.equal(triangle.edges)
+          && Graph.complement(triangle).edges.equal(empty.edges)
+          && Graph.complement(Graph.complement(path)).edges.equal(path.edges)
+      }
     )
   )
 

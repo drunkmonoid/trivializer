@@ -207,6 +207,9 @@ object Graph:
       edge.toList.foldLeft(acc)((acc, vertex) => acc.insert((vertex, edge)))
     }
 
+  def complement[A: Ordering](graph: Graph[A]): Graph[A] =
+    tryOf(graph.vertices, graph.vertices.kSubsets(2).difference(graph.edges)).get
+
   private def inverseMap[A: Ordering](mapping: Function.Function[A, A]): Function.Function[A, A] =
     val pairs = Relation.pairs(Function.relation(mapping)).toList.foldLeft(FiniteSet.empty[(A, A)]) { (acc, pair) =>
       acc.insert((pair._2, pair._1))
