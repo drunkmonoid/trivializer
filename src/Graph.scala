@@ -202,6 +202,11 @@ object Graph:
   def sortedDegreeSequence[A: Ordering](graph: Graph[A]): Sequence.Sequence[Int] =
     degreeSequence(graph).toList.sorted.foldRight(Sequence.empty[Int])(Sequence.cons)
 
+  def flags[A: Ordering](graph: Graph[A]): FiniteSet.Set[(A, FiniteSet.Set[A])] =
+    graph.edges.toList.foldLeft(FiniteSet.empty[(A, FiniteSet.Set[A])]) { (acc, edge) =>
+      edge.toList.foldLeft(acc)((acc, vertex) => acc.insert((vertex, edge)))
+    }
+
   private def inverseMap[A: Ordering](mapping: Function.Function[A, A]): Function.Function[A, A] =
     val pairs = Relation.pairs(Function.relation(mapping)).toList.foldLeft(FiniteSet.empty[(A, A)]) { (acc, pair) =>
       acc.insert((pair._2, pair._1))

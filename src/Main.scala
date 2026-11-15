@@ -993,6 +993,21 @@ package trivializer
         Graph.degreeSequence(graph) != Graph.degreeSequence(image)
           && Graph.sortedDegreeSequence(graph) == Graph.sortedDegreeSequence(image)
       }
+    ),
+    check(
+      "flags", {
+        val edge = FiniteSet.empty[Int].insert(0).insert(1)
+        val other = FiniteSet.empty[Int].insert(1).insert(2)
+        val path = Graph.tryOf(stored, FiniteSet.empty[FiniteSet.Set[Int]].insert(edge).insert(other)).get
+        val flags = Graph.flags(path)
+        val copies = FiniteSet.sum(path.edges, path.edges)
+        Enumeration.count(flags) == Graph.degreeSequence(path).toList.sum
+          && Enumeration.count(flags) == Enumeration.count(copies)
+          && Enumeration.count(flags) == flags.toList.length
+          && path.edges.toList.forall { edge =>
+            Enumeration.count(flags.filter((_, incident) => incident.equal(edge))) == edge.cardinality
+          }
+      }
     )
   )
 
