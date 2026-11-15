@@ -153,6 +153,9 @@ object Graph:
           case None        => acc
     }
 
+  def canonical[A: Ordering](graph: Graph[A]): Graph[A] =
+    relabelings(graph).toList.min
+
   def pruferEncode[A: Ordering](graph: Graph[A]): Option[Sequence.Sequence[A]] =
     if !graph.isTree then None
     else if graph.vertices.cardinality < 2 then Some(Sequence.empty[A])

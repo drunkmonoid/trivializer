@@ -754,6 +754,19 @@ package trivializer
         val expected = stored.kSubsets(2).map(edge => FiniteSet.singleton(edge))
         edgeSets.equal(expected) && Enumeration.count(family) == family.toList.length
       }
+    ),
+    check(
+      "canonical", {
+        val empty = Graph.tryOf(stored, FiniteSet.empty).get
+        val triangle = Graph.tryOf(stored, stored.kSubsets(2)).get
+        val oneEdges = stored.kSubsets(2).toList.map { edge =>
+          Graph.tryOf(stored, FiniteSet.singleton(edge)).get
+        }
+        val least = oneEdges.map(Graph.canonical).min
+        Graph.canonical(empty).edges.equal(empty.edges)
+          && Graph.canonical(triangle).edges.equal(triangle.edges)
+          && oneEdges.forall(graph => Graph.canonical(graph).edges.equal(least.edges))
+      }
     )
   )
 
