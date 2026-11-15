@@ -980,6 +980,19 @@ package trivializer
           && starDegrees.toList == star.vertices.toList.map(vertex => star.degree(vertex).get)
           && pathDegrees != starDegrees
       }
+    ),
+    check(
+      "degree-invariant", {
+        val graph = Graph.tryOf(stored, FiniteSet.singleton(FiniteSet.empty[Int].insert(1).insert(2))).get
+        val move = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((1, 0)).insert((2, 1)).insert((0, 2))
+          )
+        ).get
+        val image = Graph.relabel(graph, move).get
+        Graph.degreeSequence(graph) != Graph.degreeSequence(image)
+          && Graph.sortedDegreeSequence(graph) == Graph.sortedDegreeSequence(image)
+      }
     )
   )
 
