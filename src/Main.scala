@@ -1205,6 +1205,19 @@ package trivializer
           && Enumeration.count(Graph.components(graphOn(stored)).blocks) == Enumeration.count(stored)
           && Enumeration.count(Graph.components(graphOn(FiniteSet.empty[Int])).blocks) == 0
       }
+    ),
+    check(
+      "component-edges", {
+        val four = stored.insert(3)
+        Graph.allGraphs(four).toList.forall { graph =>
+          val blocks = Graph.components(graph).blocks
+          val pieces = blocks.toList.map(block => Graph.induced(graph, block).get.edges)
+          val gathered = pieces.foldLeft(FiniteSet.empty[FiniteSet.Set[Int]])((acc, piece) => acc.union(piece))
+          gathered.equal(graph.edges)
+            && pieces.map(piece => Enumeration.count(piece)).sum == Enumeration.count(graph.edges)
+            && graph.isConnected == (Enumeration.count(blocks) == 1)
+        }
+      }
     )
   )
 
