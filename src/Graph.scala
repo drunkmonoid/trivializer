@@ -214,6 +214,9 @@ object Graph:
     if !chosen.isSubset(graph.vertices) then None
     else tryOf(chosen, graph.edges.filter(edge => edge.isSubset(chosen)))
 
+  def component[A: Ordering](graph: Graph[A], vertex: A): Option[Graph[A]] =
+    graph.reachable(vertex).flatMap(reached => induced(graph, reached))
+
   def ontoCanonical[A: Ordering](
       graph: Graph[A]
   ): Function.Function[Function.Function[A, A], Function.Function[A, A]] =

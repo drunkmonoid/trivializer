@@ -1175,6 +1175,22 @@ package trivializer
           inside.vertices.equal(outside.vertices) && inside.edges.equal(outside.edges)
         }
       }
+    ),
+    check(
+      "component", {
+        val five = stored.insert(3).insert(4)
+        val split = graphOn(five, edge(0, 1), edge(1, 2), edge(2, 0), edge(3, 4))
+        val triangle = Graph.component(split, 0).get
+        val pair = Graph.component(split, 3).get
+        triangle.vertices.equal(stored)
+          && triangle.edges.equal(stored.kSubsets(2))
+          && pair.vertices.equal(edge(3, 4))
+          && pair.edges.equal(FiniteSet.singleton(edge(3, 4)))
+          && Graph.component(split, 1).get.edges.equal(triangle.edges)
+          && triangle.isConnected
+          && pair.isConnected
+          && Graph.component(split, 9).isEmpty
+      }
     )
   )
 
