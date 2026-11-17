@@ -28,6 +28,12 @@ package trivializer
   val left = FiniteSet.empty[Int].insert(0).insert(1)
   val right = FiniteSet.empty[Int].insert(1).insert(2)
 
+  def edge(left: Int, right: Int): FiniteSet.Set[Int] =
+    FiniteSet.empty[Int].insert(left).insert(right)
+
+  def graphOn(vertices: FiniteSet.Set[Int], edges: FiniteSet.Set[Int]*): Graph.Graph[Int] =
+    Graph.tryOf(vertices, edges.foldLeft(FiniteSet.empty[FiniteSet.Set[Int]])(_.insert(_))).get
+
   val results = List(
     check("stored elements", elements == List(0, 1, 2)),
     check("membership", stored.contains(1) && !stored.contains(3)),
@@ -1126,6 +1132,20 @@ package trivializer
           && autos.toList.forall { automorphism =>
             back.compose(onto(automorphism).get).contains(automorphism)
           }
+      }
+    ),
+    check(
+      "induced", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val inside = Graph.induced(path, stored).get
+        val apart = Graph.induced(path, edge(0, 2)).get
+        inside.vertices.equal(stored)
+          && inside.edges.equal(graphOn(stored, edge(0, 1), edge(1, 2)).edges)
+          && apart.vertices.equal(edge(0, 2))
+          && Enumeration.count(apart.edges) == 0
+          && Graph.induced(path, four).get.edges.equal(path.edges)
+          && Graph.induced(path, stored.insert(9)).isEmpty
       }
     )
   )

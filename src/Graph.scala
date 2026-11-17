@@ -210,6 +210,10 @@ object Graph:
   def complement[A: Ordering](graph: Graph[A]): Graph[A] =
     tryOf(graph.vertices, graph.vertices.kSubsets(2).difference(graph.edges)).get
 
+  def induced[A: Ordering](graph: Graph[A], chosen: FiniteSet.Set[A]): Option[Graph[A]] =
+    if !chosen.isSubset(graph.vertices) then None
+    else tryOf(chosen, graph.edges.filter(edge => edge.isSubset(chosen)))
+
   def ontoCanonical[A: Ordering](
       graph: Graph[A]
   ): Function.Function[Function.Function[A, A], Function.Function[A, A]] =
