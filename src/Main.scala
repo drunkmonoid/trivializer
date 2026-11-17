@@ -1283,6 +1283,16 @@ package trivializer
           }
         }
       }
+    ),
+    check(
+      "deck-pair", {
+        val two = edge(0, 1)
+        val joined = graphOn(two, edge(0, 1))
+        val apart = graphOn(two)
+        Graph.deck(joined) == Graph.deck(apart)
+          && !Graph.sameUnlabeled(joined, apart)
+          && Enumeration.count(Graph.deck(joined).support) == 1
+      }
     )
   )
 
