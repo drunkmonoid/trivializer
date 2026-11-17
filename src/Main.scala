@@ -1270,6 +1270,19 @@ package trivializer
           && Graph.deck(Graph.relabel(star, cycle).get) == Graph.deck(star)
           && Graph.deck(path) != Graph.deck(star)
       }
+    ),
+    check(
+      "deck-census", {
+        val four = stored.insert(3)
+        val recorded = Graph.allGraphs(four).toList.map { graph =>
+          (Graph.canonical(graph), Graph.deck(graph))
+        }
+        recorded.forall { (leftCanonical, leftDeck) =>
+          recorded.forall { (rightCanonical, rightDeck) =>
+            (leftDeck == rightDeck) == leftCanonical.edges.equal(rightCanonical.edges)
+          }
+        }
+      }
     )
   )
 
