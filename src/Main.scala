@@ -1218,6 +1218,23 @@ package trivializer
             && graph.isConnected == (Enumeration.count(blocks) == 1)
         }
       }
+    ),
+    check(
+      "forest", {
+        val four = stored.insert(3)
+        val five = four.insert(4)
+        val split = graphOn(five, edge(0, 1), edge(1, 2), edge(2, 0), edge(3, 4))
+        val pairs = graphOn(four, edge(0, 1), edge(2, 3))
+        pairs.isForest
+          && !pairs.isTree
+          && !split.isForest
+          && graphOn(FiniteSet.empty[Int]).isForest
+          && Graph.allGraphs(four).toList.forall { graph =>
+            val parts = Graph.components(graph).blocks.toList.map(block => Graph.induced(graph, block).get)
+            graph.isForest == parts.forall(_.isTree)
+              && graph.isTree == (graph.isForest && graph.isConnected)
+          }
+      }
     )
   )
 

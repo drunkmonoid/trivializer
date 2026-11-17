@@ -81,6 +81,9 @@ object Graph:
     def isTree(using Ordering[A]): Boolean =
       isConnected && Enumeration.count(edges) + 1 == Enumeration.count(vertices)
 
+    def isForest(using Ordering[A]): Boolean =
+      Enumeration.count(edges) + Enumeration.count(components(graph).blocks) == Enumeration.count(vertices)
+
   def relabel[A: Ordering](
       graph: Graph[A],
       mapping: Function.Function[A, A]
