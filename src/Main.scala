@@ -1235,6 +1235,26 @@ package trivializer
               && graph.isTree == (graph.isForest && graph.isConnected)
           }
       }
+    ),
+    check(
+      "deck", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val end = Graph.card(path, 0).get
+        val middle = Graph.card(path, 1).get
+        val deck = Graph.deck(path)
+        val shortPath = Graph.canonical(graphOn(stored, edge(0, 1), edge(1, 2)))
+        val one = Graph.canonical(graphOn(stored, edge(0, 1)))
+        val cards = deck.support
+        end.vertices.equal(four.remove(0))
+          && end.edges.equal(FiniteSet.empty[FiniteSet.Set[Int]].insert(edge(1, 2)).insert(edge(2, 3)))
+          && middle.edges.equal(FiniteSet.singleton(edge(2, 3)))
+          && Graph.card(path, 9).isEmpty
+          && deck.multiplicity(shortPath) == 2
+          && deck.multiplicity(one) == 2
+          && Enumeration.count(cards) == 2
+          && cards.toList.map(card => deck.multiplicity(card)).sum == Enumeration.count(four)
+      }
     )
   )
 

@@ -226,6 +226,20 @@ object Graph:
     }
     Partition.tryOf(graph.vertices, blocks).get
 
+  def card[A: Ordering](graph: Graph[A], vertex: A): Option[Graph[A]] =
+    if !graph.vertices.contains(vertex) then None
+    else induced(graph, graph.vertices.remove(vertex))
+
+  // Every card is moved onto the vertices left when the greatest one is dropped, so cards can be compared.
+  def deck[A: Ordering](graph: Graph[A]): Multiset.Multiset[Graph[A]] =
+    val all = graph.vertices.toList
+    all.foldLeft(Multiset.empty[Graph[A]]) { (acc, vertex) =>
+      val cut = card(graph, vertex).get
+      val pairs = cut.vertices.toList.zip(all.init).foldLeft(FiniteSet.empty[(A, A)])((set, pair) => set.insert(pair))
+      val slide = Function.tryOfRelation(Relation.ofPairs(pairs)).get
+      acc.add(canonical(relabel(cut, slide).get))
+    }
+
   def ontoCanonical[A: Ordering](
       graph: Graph[A]
   ): Function.Function[Function.Function[A, A], Function.Function[A, A]] =
