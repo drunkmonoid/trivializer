@@ -1255,6 +1255,21 @@ package trivializer
           && Enumeration.count(cards) == 2
           && cards.toList.map(card => deck.multiplicity(card)).sum == Enumeration.count(four)
       }
+    ),
+    check(
+      "deck-relabel", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graphOn(four, edge(0, 1), edge(0, 2), edge(0, 3))
+        val cycle = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 1)).insert((1, 2)).insert((2, 3)).insert((3, 0))
+          )
+        ).get
+        Graph.deck(Graph.relabel(path, cycle).get) == Graph.deck(path)
+          && Graph.deck(Graph.relabel(star, cycle).get) == Graph.deck(star)
+          && Graph.deck(path) != Graph.deck(star)
+      }
     )
   )
 
