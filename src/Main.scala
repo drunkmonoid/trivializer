@@ -1147,6 +1147,23 @@ package trivializer
           && Graph.induced(path, four).get.edges.equal(path.edges)
           && Graph.induced(path, stored.insert(9)).isEmpty
       }
+    ),
+    check(
+      "induced-relabel", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val cycle = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 1)).insert((1, 2)).insert((2, 3)).insert((3, 0))
+          )
+        ).get
+        val moved = Graph.relabel(path, cycle).get
+        four.power.toList.forall { chosen =>
+          val carried = Graph.relabel(Graph.induced(path, chosen).get, cycle).get
+          val cut = Graph.induced(moved, chosen.map(vertex => cycle(vertex).get)).get
+          carried.vertices.equal(cut.vertices) && carried.edges.equal(cut.edges)
+        }
+      }
     )
   )
 
