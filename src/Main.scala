@@ -1164,6 +1164,17 @@ package trivializer
           carried.vertices.equal(cut.vertices) && carried.edges.equal(cut.edges)
         }
       }
+    ),
+    check(
+      "induced-complement", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        four.power.toList.forall { chosen =>
+          val inside = Graph.complement(Graph.induced(path, chosen).get)
+          val outside = Graph.induced(Graph.complement(path), chosen).get
+          inside.vertices.equal(outside.vertices) && inside.edges.equal(outside.edges)
+        }
+      }
     )
   )
 
