@@ -34,6 +34,15 @@ Read these next:
 4. `degreeSequence` lists the stored degrees in vertex order. `sortedDegreeSequence` is that sequence sorted. `flags` stores a vertex with each edge that contains it. On four vertices the sorted degree sequence and the canonical graph split the stored graphs the same way. On five vertices a path and a triangle disjoint from an edge share a degree sequence and differ as canonical graphs.
 5. `complement` stores the potential edges that were missing. It commutes with relabeling and permutes the three-vertex census. The complements of that five-vertex pair stay connected and stay apart. `ontoCanonical` matches the automorphisms with the isomorphisms onto the canonical graph.
 
+A set of vertices determines the edges that lie inside it. A subgraph is that set together with those edges. Nothing else is chosen.
+
+Read these next:
+
+1. `induced` keeps the edges that lie inside a chosen set of vertices. Choosing every vertex returns the graph. It commutes with `relabel` and with `complement`.
+2. `component` is the induced subgraph on the vertices reachable from one vertex. `components` stores those reachable sets, and they form a `Partition` of the vertices. Every edge lies inside one block. On four vertices a graph is connected when there is one block.
+3. `isForest` asks whether the edge count and the block count add up to the vertex count. On four vertices a forest is a graph whose components are trees, and a tree is a connected forest.
+4. `card` drops one vertex and keeps the induced subgraph on the rest. `deck` stores the canonical cards as a multiset, one card per vertex. It is kept after a relabeling. On four vertices the deck and the canonical graph split the stored graphs the same way. On two vertices the edge and the missing edge share a deck and differ as canonical graphs.
+
 ## Run
 
 This project targets Scala 3.9. Install [Scala CLI](https://scala-cli.virtuslab.org/), then from this directory:
@@ -46,7 +55,7 @@ Exit code 0 means every invariant above holds. Exit code 1 means one of them doe
 
 ## Next
 
-Induced subgraphs. A set of vertices determines the edges that lie inside it. A component is that subgraph on the vertices reachable from one vertex.
+Self-complementary graphs. A class in the census that `complement` sends to itself. On four vertices the path is the only one.
 
 ## License
 
