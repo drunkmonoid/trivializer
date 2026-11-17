@@ -1191,6 +1191,20 @@ package trivializer
           && pair.isConnected
           && Graph.component(split, 9).isEmpty
       }
+    ),
+    check(
+      "components", {
+        val five = stored.insert(3).insert(4)
+        val split = graphOn(five, edge(0, 1), edge(1, 2), edge(2, 0), edge(3, 4))
+        val path = graphOn(five, edge(0, 1), edge(1, 2), edge(2, 3), edge(3, 4))
+        val blocks = Graph.components(split).blocks
+        val listed = FiniteSet.empty[FiniteSet.Set[Int]].insert(stored).insert(edge(3, 4))
+        blocks.equal(listed)
+          && Graph.components(split).ambient.equal(five)
+          && Graph.components(path).blocks.equal(FiniteSet.singleton(five))
+          && Enumeration.count(Graph.components(graphOn(stored)).blocks) == Enumeration.count(stored)
+          && Enumeration.count(Graph.components(graphOn(FiniteSet.empty[Int])).blocks) == 0
+      }
     )
   )
 

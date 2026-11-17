@@ -217,6 +217,12 @@ object Graph:
   def component[A: Ordering](graph: Graph[A], vertex: A): Option[Graph[A]] =
     graph.reachable(vertex).flatMap(reached => induced(graph, reached))
 
+  def components[A: Ordering](graph: Graph[A]): Partition.Partition[A] =
+    val blocks = graph.vertices.toList.foldLeft(FiniteSet.empty[FiniteSet.Set[A]]) { (acc, vertex) =>
+      acc.insert(graph.reachable(vertex).get)
+    }
+    Partition.tryOf(graph.vertices, blocks).get
+
   def ontoCanonical[A: Ordering](
       graph: Graph[A]
   ): Function.Function[Function.Function[A, A], Function.Function[A, A]] =
