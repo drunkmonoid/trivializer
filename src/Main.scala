@@ -1599,6 +1599,19 @@ package trivializer
         val family = Graph.complementing(path)
         !Graph.isSelfComplementary(path) && family.toList.isEmpty && Enumeration.count(family) == family.toList.length
       }
+    ),
+    check(
+      "five-fixed", {
+        val five = stored.insert(3).insert(4)
+        val cycle = graphOn(five, edge(0, 1), edge(1, 2), edge(2, 3), edge(3, 4), edge(4, 0))
+        Graph.complementing(cycle).toList.forall { phi =>
+          val fixed = five.toList.foldLeft(FiniteSet.empty[Int]) { (acc, vertex) =>
+            if phi(vertex).contains(vertex) then acc.insert(vertex) else acc
+          }
+          val mover = five.toList.find(vertex => !fixed.contains(vertex)).get
+          fixed.cardinality == 1 && Graph.mapOrbit(phi, mover).equal(five.difference(fixed))
+        }
+      }
     )
   )
 
