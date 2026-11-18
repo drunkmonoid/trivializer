@@ -1534,6 +1534,15 @@ package trivializer
         piece.edges.equal(FiniteSet.empty[FiniteSet.Set[Int]].insert(edge(0, 1)).insert(edge(1, 2)))
           && !Graph.isSelfComplementary(piece)
       }
+    ),
+    check(
+      "self-components", {
+        val two = FiniteSet.empty[Int].insert(0).insert(1)
+        val apart = graphOn(two)
+        Graph.isSelfComplementary(Graph.component(apart, 0).get)
+          && Graph.isSelfComplementary(Graph.component(apart, 1).get)
+          && !Graph.isSelfComplementary(apart)
+      }
     )
   )
 
