@@ -1318,6 +1318,23 @@ package trivializer
           && !Graph.isSelfComplementary(path)
           && !Graph.isSelfComplementary(triangle)
       }
+    ),
+    check(
+      "self-relabel", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graphOn(four, edge(0, 1), edge(0, 2), edge(0, 3))
+        val cycle = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 1)).insert((1, 2)).insert((2, 3)).insert((3, 0))
+          )
+        ).get
+        val movedPath = Graph.relabel(path, cycle).get
+        val movedStar = Graph.relabel(star, cycle).get
+        Graph.isSelfComplementary(movedPath)
+          && !Graph.isSelfComplementary(movedStar)
+          && Graph.sameUnlabeled(movedPath, path)
+      }
     )
   )
 
