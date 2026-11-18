@@ -1525,6 +1525,15 @@ package trivializer
           && Graph.complementing(missing).equal(Graph.complementing(path))
           && !Graph.isSelfComplementary(Graph.complement(star))
       }
+    ),
+    check(
+      "self-induced", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val piece = Graph.induced(path, stored).get
+        piece.edges.equal(FiniteSet.empty[FiniteSet.Set[Int]].insert(edge(0, 1)).insert(edge(1, 2)))
+          && !Graph.isSelfComplementary(piece)
+      }
     )
   )
 
