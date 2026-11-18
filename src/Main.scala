@@ -1612,6 +1612,26 @@ package trivializer
           fixed.cardinality == 1 && Graph.mapOrbit(phi, mover).equal(five.difference(fixed))
         }
       }
+    ),
+    check(
+      "self-walk", {
+        def steps(vertices: Int*): Sequence.Sequence[Int] =
+          vertices.foldRight(Sequence.empty[Int])(Sequence.cons)
+        def covers(graph: Graph.Graph[Int], walk: Sequence.Sequence[Int]): Boolean =
+          graph.tryWalk(walk) match
+            case Some(storedWalk) =>
+              val seen = storedWalk.toList.foldLeft(FiniteSet.empty[Int])((acc, vertex) => acc.insert(vertex))
+              seen.equal(graph.vertices) && storedWalk.length == graph.vertices.cardinality
+            case None => false
+        val four = stored.insert(3)
+        val five = four.insert(4)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val cycle = graphOn(five, edge(0, 1), edge(1, 2), edge(2, 3), edge(3, 4), edge(4, 0))
+        val bull = graphOn(five, edge(0, 1), edge(1, 2), edge(0, 2), edge(0, 3), edge(1, 4))
+        covers(path, steps(0, 1, 2, 3))
+          && covers(cycle, steps(0, 1, 2, 3, 4))
+          && covers(bull, steps(3, 0, 2, 1, 4))
+      }
     )
   )
 
