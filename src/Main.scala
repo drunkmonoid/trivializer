@@ -1301,6 +1301,23 @@ package trivializer
         val star = graphOn(four, edge(0, 1), edge(0, 2), edge(0, 3))
         Graph.isSelfComplementary(path) && !Graph.isSelfComplementary(star)
       }
+    ),
+    check(
+      "self-small", {
+        val one = graphOn(FiniteSet.singleton(0))
+        val two = FiniteSet.empty[Int].insert(0).insert(1)
+        val empty = graphOn(stored)
+        val oneEdge = graphOn(stored, edge(0, 1))
+        val path = graphOn(stored, edge(0, 1), edge(1, 2))
+        val triangle = graphOn(stored, edge(0, 1), edge(1, 2), edge(0, 2))
+        Graph.isSelfComplementary(one)
+          && !Graph.isSelfComplementary(graphOn(two, edge(0, 1)))
+          && !Graph.isSelfComplementary(graphOn(two))
+          && !Graph.isSelfComplementary(empty)
+          && !Graph.isSelfComplementary(oneEdge)
+          && !Graph.isSelfComplementary(path)
+          && !Graph.isSelfComplementary(triangle)
+      }
     )
   )
 
