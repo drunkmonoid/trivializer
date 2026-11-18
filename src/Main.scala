@@ -1561,6 +1561,25 @@ package trivializer
           Graph.mapOrbit(phi, 0).equal(four)
         }
       }
+    ),
+    check(
+      "five-cycle", {
+        val five = stored.insert(3).insert(4)
+        val cycle = graphOn(five, edge(0, 1), edge(1, 2), edge(2, 3), edge(3, 4), edge(4, 0))
+        val phi = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet
+              .empty[(Int, Int)]
+              .insert((0, 0))
+              .insert((1, 2))
+              .insert((2, 4))
+              .insert((3, 1))
+              .insert((4, 3))
+          )
+        ).get
+        val family = Graph.complementing(cycle)
+        Graph.isSelfComplementary(cycle) && family.contains(phi) && family.toList.nonEmpty
+      }
     )
   )
 
