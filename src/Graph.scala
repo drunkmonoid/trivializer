@@ -216,6 +216,9 @@ object Graph:
   def isSelfComplementary[A: Ordering](graph: Graph[A]): Boolean =
     sameUnlabeled(graph, complement(graph))
 
+  def selfComplementary[A: Ordering](vertices: FiniteSet.Set[A]): FiniteSet.Set[Graph[A]] =
+    allGraphs(vertices).filter(graph => isSelfComplementary(graph))
+
   def induced[A: Ordering](graph: Graph[A], chosen: FiniteSet.Set[A]): Option[Graph[A]] =
     if !chosen.isSubset(graph.vertices) then None
     else tryOf(chosen, graph.edges.filter(edge => edge.isSubset(chosen)))

@@ -1335,6 +1335,17 @@ package trivializer
           && !Graph.isSelfComplementary(movedStar)
           && Graph.sameUnlabeled(movedPath, path)
       }
+    ),
+    check(
+      "self-family", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graphOn(four, edge(0, 1), edge(0, 2), edge(0, 3))
+        val family = Graph.selfComplementary(four)
+        family.contains(path)
+          && !family.contains(star)
+          && Enumeration.count(family) == family.toList.length
+      }
     )
   )
 
