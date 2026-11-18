@@ -1457,6 +1457,19 @@ package trivializer
           && Enumeration.count(star.edges) == Enumeration.count(Graph.complement(star).edges)
           && Graph.complementing(star).toList.isEmpty
       }
+    ),
+    check(
+      "degree-halves", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val missing = Graph.complement(path)
+        val one = graphOn(FiniteSet.singleton(0))
+        val oneMissing = Graph.complement(one)
+        path.vertices.toList.forall { vertex =>
+          path.degree(vertex).get + missing.degree(vertex).get == path.vertices.remove(vertex).cardinality
+        }
+          && one.degree(0).get + oneMissing.degree(0).get == one.vertices.remove(0).cardinality
+      }
     )
   )
 
