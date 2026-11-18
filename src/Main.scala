@@ -1632,6 +1632,24 @@ package trivializer
           && covers(cycle, steps(0, 1, 2, 3, 4))
           && covers(bull, steps(3, 0, 2, 1, 4))
       }
+    ),
+    check(
+      "self-tree", {
+        val four = stored.insert(3)
+        val five = four.insert(4)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graphOn(four, edge(0, 1), edge(0, 2), edge(0, 3))
+        val cycle = graphOn(five, edge(0, 1), edge(1, 2), edge(2, 3), edge(3, 4), edge(4, 0))
+        val bull = graphOn(five, edge(0, 1), edge(1, 2), edge(0, 2), edge(0, 3), edge(1, 4))
+        path.isTree
+          && Graph.isSelfComplementary(path)
+          && Graph.isSelfComplementary(cycle)
+          && !cycle.isTree
+          && Graph.isSelfComplementary(bull)
+          && !bull.isTree
+          && star.isTree
+          && !Graph.isSelfComplementary(star)
+      }
     )
   )
 
