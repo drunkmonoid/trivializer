@@ -1346,6 +1346,17 @@ package trivializer
           && !family.contains(star)
           && Enumeration.count(family) == family.toList.length
       }
+    ),
+    check(
+      "self-census", {
+        val four = stored.insert(3)
+        val path = Graph.canonical(graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3)))
+        val census = Graph.selfComplementaryCensus(four)
+        census.equal(FiniteSet.singleton(path))
+          && Graph.selfComplementary(four).toList.forall { graph =>
+            Graph.canonical(graph).edges.equal(path.edges)
+          }
+      }
     )
   )
 

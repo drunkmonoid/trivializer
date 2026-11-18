@@ -219,6 +219,11 @@ object Graph:
   def selfComplementary[A: Ordering](vertices: FiniteSet.Set[A]): FiniteSet.Set[Graph[A]] =
     allGraphs(vertices).filter(graph => isSelfComplementary(graph))
 
+  def selfComplementaryCensus[A: Ordering](vertices: FiniteSet.Set[A]): FiniteSet.Set[Graph[A]] =
+    selfComplementary(vertices).toList.foldLeft(FiniteSet.empty[Graph[A]]) { (acc, graph) =>
+      acc.insert(canonical(graph))
+    }
+
   def induced[A: Ordering](graph: Graph[A], chosen: FiniteSet.Set[A]): Option[Graph[A]] =
     if !chosen.isSubset(graph.vertices) then None
     else tryOf(chosen, graph.edges.filter(edge => edge.isSubset(chosen)))
