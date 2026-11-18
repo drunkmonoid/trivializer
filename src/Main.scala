@@ -1357,6 +1357,21 @@ package trivializer
             Graph.canonical(graph).edges.equal(path.edges)
           }
       }
+    ),
+    check(
+      "self-census-small", {
+        val one = FiniteSet.singleton(0)
+        val two = FiniteSet.empty[Int].insert(0).insert(1)
+        val alone = Graph.selfComplementaryCensus(one)
+        val pair = Graph.selfComplementaryCensus(two)
+        val triple = Graph.selfComplementaryCensus(stored)
+        alone.equal(FiniteSet.singleton(graphOn(one)))
+          && pair.toList.isEmpty
+          && triple.toList.isEmpty
+          && Enumeration.count(alone) == alone.toList.length
+          && Enumeration.count(pair) == pair.toList.length
+          && Enumeration.count(triple) == triple.toList.length
+      }
     )
   )
 
