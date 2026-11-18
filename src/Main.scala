@@ -1650,6 +1650,17 @@ package trivializer
           && star.isTree
           && !Graph.isSelfComplementary(star)
       }
+    ),
+    check(
+      "self-connected", {
+        val four = stored.insert(3)
+        val star = graphOn(four, edge(0, 1), edge(0, 2), edge(0, 3))
+        Graph.selfComplementary(four).toList.forall { graph =>
+          graph.isConnected && Graph.complement(graph).isConnected
+        }
+          && star.isConnected
+          && !Graph.complement(star).isConnected
+      }
     )
   )
 
