@@ -241,6 +241,24 @@ object Graph:
     }
     Function.tryOfRelation(Relation.ofPairs(pairs)).get
 
+  def edgeOrbits[A: Ordering](
+      graph: Graph[A],
+      mapping: Function.Function[A, A]
+  ): FiniteSet.Set[FiniteSet.Set[FiniteSet.Set[A]]] =
+    def image(edge: FiniteSet.Set[A]): FiniteSet.Set[A] =
+      edge.toList.foldLeft(FiniteSet.empty[A])((set, vertex) => set.insert(mapping(vertex).get))
+
+    def orbit(start: FiniteSet.Set[A]): FiniteSet.Set[FiniteSet.Set[A]] =
+      def walk(current: FiniteSet.Set[A], seen: FiniteSet.Set[FiniteSet.Set[A]]): FiniteSet.Set[FiniteSet.Set[A]] =
+        if seen.contains(current) then seen
+        else walk(image(current), seen.insert(current))
+
+      walk(start, FiniteSet.empty)
+
+    graph.vertices.kSubsets(2).toList.foldLeft(FiniteSet.empty[FiniteSet.Set[FiniteSet.Set[A]]]) { (acc, edge) =>
+      acc.insert(orbit(edge))
+    }
+
   def induced[A: Ordering](graph: Graph[A], chosen: FiniteSet.Set[A]): Option[Graph[A]] =
     if !chosen.isSubset(graph.vertices) then None
     else tryOf(chosen, graph.edges.filter(edge => edge.isSubset(chosen)))

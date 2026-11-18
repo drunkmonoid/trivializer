@@ -1485,6 +1485,26 @@ package trivializer
           path.degree(vertex) == missing.degree(phi(vertex).get)
         }
       }
+    ),
+    check(
+      "edge-orbits", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val missing = Graph.complement(path)
+        val phi = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 2)).insert((1, 0)).insert((2, 3)).insert((3, 1))
+          )
+        ).get
+        val orbits = Graph.edgeOrbits(path, phi)
+        val covered = orbits.toList.foldLeft(FiniteSet.empty[FiniteSet.Set[Int]])((acc, orbit) => acc.union(orbit))
+        covered.equal(four.kSubsets(2))
+          && orbits.toList.forall { orbit =>
+            val inPath = orbit.filter(edge => path.edges.contains(edge))
+            val inMissing = orbit.filter(edge => missing.edges.contains(edge))
+            Enumeration.count(inPath) == Enumeration.count(inMissing)
+          }
+      }
     )
   )
 
