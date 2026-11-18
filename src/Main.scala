@@ -1505,6 +1505,14 @@ package trivializer
             Enumeration.count(inPath) == Enumeration.count(inMissing)
           }
       }
+    ),
+    check(
+      "complementing-identity", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val identity = Function.identity(four)
+        Graph.automorphisms(path).contains(identity) && !Graph.complementing(path).contains(identity)
+      }
     )
   )
 
