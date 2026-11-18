@@ -1372,6 +1372,27 @@ package trivializer
           && Enumeration.count(pair) == pair.toList.length
           && Enumeration.count(triple) == triple.toList.length
       }
+    ),
+    check(
+      "complementing-map", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val phi = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 2)).insert((1, 0)).insert((2, 3)).insert((3, 1))
+          )
+        ).get
+        val inverse = Function.tryOfRelation(
+          Relation.ofPairs(
+            Relation.pairs(Function.relation(phi)).toList.foldLeft(FiniteSet.empty[(Int, Int)]) { (acc, pair) =>
+              acc.insert((pair._2, pair._1))
+            }
+          )
+        ).get
+        val carried = Graph.relabel(path, phi).get
+        val back = Graph.relabel(Graph.complement(path), inverse).get
+        carried.edges.equal(Graph.complement(path).edges) && back.edges.equal(path.edges)
+      }
     )
   )
 
