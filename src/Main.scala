@@ -1543,6 +1543,15 @@ package trivializer
           && Graph.isSelfComplementary(Graph.component(apart, 1).get)
           && !Graph.isSelfComplementary(apart)
       }
+    ),
+    check(
+      "self-deck", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graphOn(four, edge(0, 1), edge(0, 2), edge(0, 3))
+        Graph.deck(path) == Graph.deck(Graph.complement(path))
+          && Graph.deck(star) != Graph.deck(Graph.complement(star))
+      }
     )
   )
 
