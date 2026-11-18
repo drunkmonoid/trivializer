@@ -1580,6 +1580,17 @@ package trivializer
         val family = Graph.complementing(cycle)
         Graph.isSelfComplementary(cycle) && family.contains(phi) && family.toList.nonEmpty
       }
+    ),
+    check(
+      "bull", {
+        val five = stored.insert(3).insert(4)
+        val cycle = graphOn(five, edge(0, 1), edge(1, 2), edge(2, 3), edge(3, 4), edge(4, 0))
+        val bull = graphOn(five, edge(0, 1), edge(1, 2), edge(0, 2), edge(0, 3), edge(1, 4))
+        Graph.isSelfComplementary(bull)
+          && Graph.complementing(bull).toList.nonEmpty
+          && !Graph.sameUnlabeled(bull, cycle)
+          && Graph.sortedDegreeSequence(bull) != Graph.sortedDegreeSequence(cycle)
+      }
     )
   )
 
