@@ -1436,6 +1436,27 @@ package trivializer
             && halves.isBijective(tagged, four.kSubsets(2))
         covered(path) && covered(star)
       }
+    ),
+    check(
+      "complementing-edges", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graphOn(four, edge(0, 1), edge(0, 2), edge(0, 3))
+        val phi = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 2)).insert((1, 0)).insert((2, 3)).insert((3, 1))
+          )
+        ).get
+        val pairs = path.edges.toList.foldLeft(FiniteSet.empty[(FiniteSet.Set[Int], FiniteSet.Set[Int])]) {
+          (acc, edge) =>
+            val image = edge.toList.foldLeft(FiniteSet.empty[Int])((set, vertex) => set.insert(phi(vertex).get))
+            acc.insert((edge, image))
+        }
+        val forward = Function.tryOfRelation(Relation.ofPairs(pairs)).get
+        forward.isBijective(path.edges, Graph.complement(path).edges)
+          && Enumeration.count(star.edges) == Enumeration.count(Graph.complement(star).edges)
+          && Graph.complementing(star).toList.isEmpty
+      }
     )
   )
 
