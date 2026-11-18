@@ -1470,6 +1470,21 @@ package trivializer
         }
           && one.degree(0).get + oneMissing.degree(0).get == one.vertices.remove(0).cardinality
       }
+    ),
+    check(
+      "degree-travels", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val missing = Graph.complement(path)
+        val phi = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 2)).insert((1, 0)).insert((2, 3)).insert((3, 1))
+          )
+        ).get
+        path.vertices.toList.forall { vertex =>
+          path.degree(vertex) == missing.degree(phi(vertex).get)
+        }
+      }
     )
   )
 
