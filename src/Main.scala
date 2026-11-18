@@ -1423,6 +1423,19 @@ package trivializer
           autos.contains(squared) && squared.compose(squared).contains(identity)
         }
       }
+    ),
+    check(
+      "edge-halves", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graphOn(four, edge(0, 1), edge(0, 2), edge(0, 3))
+        def covered(graph: Graph.Graph[Int]): Boolean =
+          val halves = Graph.edgeHalves(graph)
+          val tagged = FiniteSet.sum(graph.edges, Graph.complement(graph).edges)
+          halves(FiniteSet.injectLeft(graph.edges.toList.head)).contains(graph.edges.toList.head)
+            && halves.isBijective(tagged, four.kSubsets(2))
+        covered(path) && covered(star)
+      }
     )
   )
 

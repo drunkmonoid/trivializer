@@ -227,6 +227,20 @@ object Graph:
   def complementing[A: Ordering](graph: Graph[A]): FiniteSet.Set[Function.Function[A, A]] =
     isomorphisms(graph, complement(graph))
 
+  def edgeHalves[A: Ordering](
+      graph: Graph[A]
+  ): Function.Function[Tagged[FiniteSet.Set[A], FiniteSet.Set[A]], FiniteSet.Set[A]] =
+    val tagged = FiniteSet.sum(graph.edges, complement(graph).edges)
+    val pairs = tagged.toList.foldLeft(
+      FiniteSet.empty[(Tagged[FiniteSet.Set[A], FiniteSet.Set[A]], FiniteSet.Set[A])]
+    ) { (acc, tag) =>
+      val edge = tag match
+        case Tagged.Left(edge)  => edge
+        case Tagged.Right(edge) => edge
+      acc.insert((tag, edge))
+    }
+    Function.tryOfRelation(Relation.ofPairs(pairs)).get
+
   def induced[A: Ordering](graph: Graph[A], chosen: FiniteSet.Set[A]): Option[Graph[A]] =
     if !chosen.isSubset(graph.vertices) then None
     else tryOf(chosen, graph.edges.filter(edge => edge.isSubset(chosen)))
