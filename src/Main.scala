@@ -1293,6 +1293,14 @@ package trivializer
           && !Graph.sameUnlabeled(joined, apart)
           && Enumeration.count(Graph.deck(joined).support) == 1
       }
+    ),
+    check(
+      "self-complementary", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graphOn(four, edge(0, 1), edge(0, 2), edge(0, 3))
+        Graph.isSelfComplementary(path) && !Graph.isSelfComplementary(star)
+      }
     )
   )
 
