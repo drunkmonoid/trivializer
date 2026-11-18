@@ -43,6 +43,15 @@ Read these next:
 3. `isForest` asks whether the edge count and the block count add up to the vertex count. On four vertices a forest is a graph whose components are trees, and a tree is a connected forest.
 4. `card` drops one vertex and keeps the induced subgraph on the rest. `deck` stores the canonical cards as a multiset, one card per vertex. It is kept after a relabeling. On four vertices the deck and the canonical graph split the stored graphs the same way. On two vertices the edge and the missing edge share a deck and differ as canonical graphs.
 
+A graph is self-complementary when a stored bijection carries it onto its complement. An equal edge count is not that witness.
+
+Read these next:
+
+1. `isSelfComplementary` asks whether a graph and its complement are the same unlabeled graph. The path on four vertices passes. The star fails. One vertex passes. Two and three vertices do not.
+2. `selfComplementary` stores every such labeled graph. `selfComplementaryCensus` keeps one canonical graph per class. On four vertices that census is the canonical path. On one vertex it is that graph. On two and three vertices it is empty.
+3. `complementing` stores every bijection onto the complement. The square of each one for the path is an automorphism. `edgeHalves` tags the edges of a graph and of its complement and matches them with the potential edges. `edgeOrbits` stores the orbits of those potential edges under a complementing bijection. `mapOrbit` is the orbit of one vertex under that bijection.
+4. The path's complement passes, and its deck matches. A three-vertex piece of the path fails. Each isolated vertex passes while the two-vertex graph fails. On five vertices the five-cycle and the bull pass and differ. The path on five vertices fails.
+
 ## Run
 
 This project targets Scala 3.9. Install [Scala CLI](https://scala-cli.virtuslab.org/), then from this directory:
@@ -55,7 +64,7 @@ Exit code 0 means every invariant above holds. Exit code 1 means one of them doe
 
 ## Next
 
-Self-complementary graphs. A class in the census that `complement` sends to itself. On four vertices the path is the only one.
+Homomorphisms. A map of vertices that sends every edge to an edge. An isomorphism is a bijective homomorphism whose inverse is also a homomorphism.
 
 ## License
 
