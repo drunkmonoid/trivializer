@@ -1681,6 +1681,15 @@ package trivializer
         }
         pathShare.equal(path.edges) && missingShare.equal(missing.edges)
       }
+    ),
+    check(
+      "self-census-closed", {
+        val four = stored.insert(3)
+        val census = Graph.selfComplementaryCensus(four)
+        census.toList.forall { graph =>
+          census.contains(Graph.canonical(Graph.complement(graph)))
+        }
+      }
     )
   )
 
