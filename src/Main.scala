@@ -1591,6 +1591,14 @@ package trivializer
           && !Graph.sameUnlabeled(bull, cycle)
           && Graph.sortedDegreeSequence(bull) != Graph.sortedDegreeSequence(cycle)
       }
+    ),
+    check(
+      "five-path", {
+        val five = stored.insert(3).insert(4)
+        val path = graphOn(five, edge(0, 1), edge(1, 2), edge(2, 3), edge(3, 4))
+        val family = Graph.complementing(path)
+        !Graph.isSelfComplementary(path) && family.toList.isEmpty && Enumeration.count(family) == family.toList.length
+      }
     )
   )
 
