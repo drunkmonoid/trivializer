@@ -224,6 +224,9 @@ object Graph:
       acc.insert(canonical(graph))
     }
 
+  def complementing[A: Ordering](graph: Graph[A]): FiniteSet.Set[Function.Function[A, A]] =
+    isomorphisms(graph, complement(graph))
+
   def induced[A: Ordering](graph: Graph[A], chosen: FiniteSet.Set[A]): Option[Graph[A]] =
     if !chosen.isSubset(graph.vertices) then None
     else tryOf(chosen, graph.edges.filter(edge => edge.isSubset(chosen)))

@@ -1393,6 +1393,24 @@ package trivializer
         val back = Graph.relabel(Graph.complement(path), inverse).get
         carried.edges.equal(Graph.complement(path).edges) && back.edges.equal(path.edges)
       }
+    ),
+    check(
+      "complementing", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graphOn(four, edge(0, 1), edge(0, 2), edge(0, 3))
+        val phi = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 2)).insert((1, 0)).insert((2, 3)).insert((3, 1))
+          )
+        ).get
+        val family = Graph.complementing(path)
+        val none = Graph.complementing(star)
+        family.contains(phi)
+          && Enumeration.count(family) == family.toList.length
+          && none.toList.isEmpty
+          && Enumeration.count(none) == none.toList.length
+      }
     )
   )
 
