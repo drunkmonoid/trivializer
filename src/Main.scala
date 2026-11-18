@@ -1552,6 +1552,15 @@ package trivializer
         Graph.deck(path) == Graph.deck(Graph.complement(path))
           && Graph.deck(star) != Graph.deck(Graph.complement(star))
       }
+    ),
+    check(
+      "complementing-orbit", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        Graph.complementing(path).toList.forall { phi =>
+          Graph.mapOrbit(phi, 0).equal(four)
+        }
+      }
     )
   )
 

@@ -259,6 +259,13 @@ object Graph:
       acc.insert(orbit(edge))
     }
 
+  def mapOrbit[A: Ordering](mapping: Function.Function[A, A], start: A): FiniteSet.Set[A] =
+    def walk(current: A, seen: FiniteSet.Set[A]): FiniteSet.Set[A] =
+      if seen.contains(current) then seen
+      else walk(mapping(current).get, seen.insert(current))
+
+    walk(start, FiniteSet.empty)
+
   def induced[A: Ordering](graph: Graph[A], chosen: FiniteSet.Set[A]): Option[Graph[A]] =
     if !chosen.isSubset(graph.vertices) then None
     else tryOf(chosen, graph.edges.filter(edge => edge.isSubset(chosen)))
