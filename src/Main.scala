@@ -1661,6 +1661,26 @@ package trivializer
           && star.isConnected
           && !Graph.complement(star).isConnected
       }
+    ),
+    check(
+      "orbit-sides", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val missing = Graph.complement(path)
+        val phi = Function.tryOfRelation(
+          Relation.ofPairs(
+            FiniteSet.empty[(Int, Int)].insert((0, 2)).insert((1, 0)).insert((2, 3)).insert((3, 1))
+          )
+        ).get
+        val orbits = Graph.edgeOrbits(path, phi)
+        val pathShare = orbits.toList.foldLeft(FiniteSet.empty[FiniteSet.Set[Int]]) { (acc, orbit) =>
+          acc.union(orbit.filter(edge => path.edges.contains(edge)))
+        }
+        val missingShare = orbits.toList.foldLeft(FiniteSet.empty[FiniteSet.Set[Int]]) { (acc, orbit) =>
+          acc.union(orbit.filter(edge => missing.edges.contains(edge)))
+        }
+        pathShare.equal(path.edges) && missingShare.equal(missing.edges)
+      }
     )
   )
 
