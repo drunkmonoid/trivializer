@@ -1411,6 +1411,18 @@ package trivializer
           && none.toList.isEmpty
           && Enumeration.count(none) == none.toList.length
       }
+    ),
+    check(
+      "complementing-square", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val autos = Graph.automorphisms(path)
+        val identity = Function.identity(four)
+        Graph.complementing(path).toList.forall { phi =>
+          val squared = phi.compose(phi).get
+          autos.contains(squared) && squared.compose(squared).contains(identity)
+        }
+      }
     )
   )
 
