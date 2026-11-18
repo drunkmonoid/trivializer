@@ -1513,6 +1513,18 @@ package trivializer
         val identity = Function.identity(four)
         Graph.automorphisms(path).contains(identity) && !Graph.complementing(path).contains(identity)
       }
+    ),
+    check(
+      "complement-self", {
+        val four = stored.insert(3)
+        val path = graphOn(four, edge(0, 1), edge(1, 2), edge(2, 3))
+        val star = graphOn(four, edge(0, 1), edge(0, 2), edge(0, 3))
+        val missing = Graph.complement(path)
+        Graph.isSelfComplementary(missing)
+          && Graph.canonical(missing).edges.equal(Graph.canonical(path).edges)
+          && Graph.complementing(missing).equal(Graph.complementing(path))
+          && !Graph.isSelfComplementary(Graph.complement(star))
+      }
     )
   )
 
